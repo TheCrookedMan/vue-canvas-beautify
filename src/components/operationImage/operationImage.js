@@ -44,6 +44,7 @@ export default class operationImage {
   createCanvas() {
     this.canvas = document.createElement('Canvas')
     this.canvas.id = 'drawCanvas'
+    this.canvas.setAttribute('crossOrigin', 'anonymous');
     this.canvasContainerDiv = document.createElement('div')
     this.canvasContainerDiv.id = 'canvasContainerDiv'
     this.canvasContainerDiv.appendChild(this.canvas)
