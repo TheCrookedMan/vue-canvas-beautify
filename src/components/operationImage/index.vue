@@ -2,24 +2,24 @@
     <div class="container">
         <div class="beautify-header" ref="header">
             <i class="iconfont icon-back" @click.native="cancel"></i>
-            <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click.stop.prevent="preOperateStack"></i>
+            <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click="preOperateStack"></i>
             <i class="iconfont icon-advance icon-display" v-else></i>
-            <i class="iconfont icon-retreat" v-if="operateStack.length > 0 && operateStackIndex < operateStack.length - 1" @click.stop.prevent="nextOperateStack"></i>
+            <i class="iconfont icon-retreat" v-if="operateStack.length > 0 && operateStackIndex < operateStack.length - 1" @click="nextOperateStack"></i>
             <i class="iconfont icon-retreat icon-display" v-else></i>
             <span class="btn-save" @click.native="submit">保存</span>
         </div>
         <div class="beautify-body" ref="body"></div>
         <div class="beautify-footer" ref="footer">
             <div class="main-control-panel flexbox" ref="mainControlPanel">
-                <div class="flex-item" @click.stop.prevent="crop">
+                <div class="flex-item" @click="crop">
                     <i class="iconfont icon-crop"></i>
                     <p>裁切旋转</p>
                 </div>
-                <div class="flex-item" @click.stop.prevent="beginDoodle">
+                <div class="flex-item" @click="beginDoodle">
                     <i class="iconfont icon-tubiao2tuya"></i>
                     <p>涂鸦</p>
                 </div>
-                <div class="flex-item" @click.stop.prevent="beginColorHandle">
+                <div class="flex-item" @click="beginColorHandle">
                     <i class="iconfont icon-quse-"></i>
                     <p>去色</p>
                 </div>
@@ -35,35 +35,35 @@
                             <i class="iconfont icon-fanzhuan"></i>
                             <p>翻转</p>
                         </div> -->
-                        <div class="crop-operation-item" :class="{checked:'freedom' === currentCropType}" @click.stop.prevent="chooseCropViewBox('freedom')">
+                        <div class="crop-operation-item" :class="{checked:'freedom' === currentCropType}" @click="chooseCropViewBox('freedom')">
                             <i class="iconfont icon-ziyou-"></i>
                             <p>自由</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'1:1' === currentCropType}" @click.stop.prevent="chooseCropViewBox('1:1')">
+                        <div class="crop-operation-item" :class="{checked:'1:1' === currentCropType}" @click="chooseCropViewBox('1:1')">
                             <i class="iconfont icon-bi6"></i>
                             <p>1:1</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'3:4' === currentCropType}" @click.stop.prevent="chooseCropViewBox('3:4')">
+                        <div class="crop-operation-item" :class="{checked:'3:4' === currentCropType}" @click="chooseCropViewBox('3:4')">
                             <i class="iconfont icon-bi3"></i>
                             <p>3:4</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'4:3' === currentCropType}" @click.stop.prevent="chooseCropViewBox('4:3')">
+                        <div class="crop-operation-item" :class="{checked:'4:3' === currentCropType}" @click="chooseCropViewBox('4:3')">
                             <i class="iconfont icon-bi5"></i>
                             <p>4:3</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'9:16' === currentCropType}" @click.stop.prevent="chooseCropViewBox('9:16')">
+                        <div class="crop-operation-item" :class="{checked:'9:16' === currentCropType}" @click="chooseCropViewBox('9:16')">
                             <i class="iconfont icon-bi4"></i>
                             <p>9:16</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'16:9' === currentCropType}" @click.stop.prevent="chooseCropViewBox('16:9')">
+                        <div class="crop-operation-item" :class="{checked:'16:9' === currentCropType}" @click="chooseCropViewBox('16:9')">
                             <i class="iconfont icon-bi1"></i>
                             <p>16:9</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'2:3' === currentCropType}" @click.stop.prevent="chooseCropViewBox('2:3')">
+                        <div class="crop-operation-item" :class="{checked:'2:3' === currentCropType}" @click="chooseCropViewBox('2:3')">
                             <i class="iconfont icon-bi2"></i>
                             <p>2:3</p>
                         </div>
-                        <div class="crop-operation-item" :class="{checked:'3:2' === currentCropType}" @click.stop.prevent="chooseCropViewBox('3:2')">
+                        <div class="crop-operation-item" :class="{checked:'3:2' === currentCropType}" @click="chooseCropViewBox('3:2')">
                             <i class="iconfont icon-bi"></i>
                             <p>3:2</p>
                         </div>
@@ -71,18 +71,18 @@
                 </div>
                 <div class="final-operation flexbox">
                     <div class="flex-item">
-                        <i class="iconfont icon-scha" @click.stop.prevent="cancelCropImage"></i>
+                        <i class="iconfont icon-scha" @click="cancelCropImage"></i>
                     </div>
                     <div class="flex-item">裁切旋转</div>
                     <div class="flex-item">
-                        <i class="iconfont icon-duigou3" @click.stop.prevent="sureCropImage"></i>
+                        <i class="iconfont icon-duigou3" @click="sureCropImage"></i>
                     </div>
                 </div>
             </div>
             <div class="doodle-control-panel" ref="doodleControlPanel">
                 <div class="doodle-operation-panel">
                     <div class="doodle-color-list">
-                        <div class="doodle-color-item" v-for="(item) in doodleColorSpanList" :key="item.id" @click.stop.prevent="chooseDoodleColor(item)">
+                        <div class="doodle-color-item" v-for="(item) in doodleColorSpanList" :key="item.id" @click="chooseDoodleColor(item)">
                             <span :style="{backgroundColor:item}" :class="{'checked':item === currentPencilColor}"></span>
                         </div>
                     </div>
@@ -91,33 +91,33 @@
                             <p>画笔大小</p>
                         </div>
                         <div class="doodle-operation-item doodle-circle">
-                            <div class="doodle-circle-item" @click.stop.prevent="chooseDoodleSize('S')">
+                            <div class="doodle-circle-item" @click="chooseDoodleSize('S')">
                                 <span class="circle" :class="{checked: 'S' === currentDoodleSize && 'pencil' === currentDoodleTool}"></span>
                             </div>
-                            <div class="doodle-circle-item" @click.stop.prevent="chooseDoodleSize('M')">
+                            <div class="doodle-circle-item" @click="chooseDoodleSize('M')">
                                 <span class="circle" :class="{checked: 'M' === currentDoodleSize && 'pencil' === currentDoodleTool}"></span>
                             </div>
-                            <div class="doodle-circle-item" @click.stop.prevent="chooseDoodleSize('L')">
+                            <div class="doodle-circle-item" @click="chooseDoodleSize('L')">
                                 <span class="circle" :class="{checked: 'L' === currentDoodleSize && 'pencil' === currentDoodleTool}"></span>
                             </div>
-                            <div class="doodle-circle-item" @click.stop.prevent="chooseDoodleSize('XL')">
+                            <div class="doodle-circle-item" @click="chooseDoodleSize('XL')">
                                 <span class="circle" :class="{checked: 'XL' === currentDoodleSize && 'pencil' === currentDoodleTool}"></span>
                             </div>
-                            <div class="doodle-circle-item" @click.stop.prevent="chooseDoodleSize('XXL')">
+                            <div class="doodle-circle-item" @click="chooseDoodleSize('XXL')">
                                 <span class="circle" :class="{checked: 'XXL' === currentDoodleSize && 'pencil' === currentDoodleTool}"></span>
                             </div>
                         </div>
-                        <div class="doodle-operation-item doodle-rubber" :class="{checked: 'rubber' === currentDoodleTool}" @click.stop.prevent="chooseDoodleRubber">
+                        <div class="doodle-operation-item doodle-rubber" :class="{checked: 'rubber' === currentDoodleTool}" @click="chooseDoodleRubber">
                             <i class="iconfont icon-xiangpica"></i>
                         </div>
                     </div>
                     <div class="final-operation flexbox">
                         <div class="flex-item">
-                            <i class="iconfont icon-scha" @click.stop.prevent="cancelDoodleImage"></i>
+                            <i class="iconfont icon-scha" @click="cancelDoodleImage"></i>
                         </div>
                         <div class="flex-item">涂鸦</div>
                         <div class="flex-item">
-                            <i class="iconfont icon-duigou3" @click.stop.prevent="sureDoodleImage"></i>
+                            <i class="iconfont icon-duigou3" @click="sureDoodleImage"></i>
                         </div>
                     </div>
                 </div>
@@ -125,21 +125,21 @@
             <div class="color-control-panel" ref="colorControlPanel">
                 <div class="final-operation flexbox">
                         <div class="flex-item">
-                            <i class="iconfont icon-scha" @click.stop.prevent="cancelColorHandle"></i>
+                            <i class="iconfont icon-scha" @click="cancelColorHandle"></i>
                         </div>
                         <div class="flex-item">去色</div>
                         <div class="flex-item">
-                            <i class="iconfont icon-duigou3" @click.stop.prevent="sureColorHandle"></i>
+                            <i class="iconfont icon-duigou3" @click="sureColorHandle"></i>
                         </div>
                     </div>
             </div>
         </div>
 
         <div class="btn-pre" v-if="currentIndex > 0 && showPreAndNextBtn">
-            <i class="iconfont icon-arrow_left1" @click.stop.prevent="preImage"></i>
+            <i class="iconfont icon-arrow_left1" @click="preImage"></i>
         </div>
         <div class="btn-next" v-if="currentIndex < imageList.length - 1 && showPreAndNextBtn">
-            <i class="iconfont icon-arrow_right" @click.stop.prevent="nextImage"></i>
+            <i class="iconfont icon-arrow_right" @click="nextImage"></i>
         </div>
     </div>
 </template>
