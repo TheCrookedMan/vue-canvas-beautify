@@ -67,8 +67,10 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
+        alert(1)
         img.src = imageInfo.origin
       } else {
+        alert(2)
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
       alert("imageInfo::::" + JSON.stringify(imageInfo))
@@ -485,7 +487,6 @@ export default class operationImage {
       this.imageList[i]['borderlineValue'] = {}
       this.imageList[i]['operateStack'] = []
       this.imageList[i]['operateStackIndex'] = -1
-      this.imageList[i]['currentOperateStackIndex'] = -1
     })
   }
 
