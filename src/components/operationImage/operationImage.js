@@ -30,10 +30,9 @@ export default class operationImage {
     this.imageList = Object.assign([], imageList)
     //刷新图片缓存
     this.imageList.forEach((I,i)=>{
-      debugger
       let img = new Image()
       img.crossOrigin = "anonymous";
-      img.src = I + '&t='+Date.now()
+      img.src = I.origin + '&t='+Date.now()
     })
 
     this.initImagePrototype()
