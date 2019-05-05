@@ -307,6 +307,7 @@ export default {
     flex-direction: column;
     background: color(#fff);
     color: #000;
+    text-align: center;
 
     .beautify-header {
         height: 40px;
