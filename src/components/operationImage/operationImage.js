@@ -51,7 +51,7 @@ export default class operationImage {
   loadImage() {
     let img = new Image(),
       self = this;
-    img.crossOrigin = "use-credentials";
+    img.crossOrigin = "anonymous";
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         self.imageList[self.currentIndex]['image'] = this
