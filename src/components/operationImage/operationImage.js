@@ -52,7 +52,7 @@ export default class operationImage {
     // let img = new Image(),
     let img = document.createElement('img'),
       self = this;
-    // img.setAttribute('crossOrigin', 'anonymous');
+    img.setAttribute('crossOrigin', 'anonymous');
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         self.imageList[self.currentIndex]['image'] = this
