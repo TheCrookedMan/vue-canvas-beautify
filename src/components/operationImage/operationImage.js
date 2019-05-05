@@ -122,7 +122,7 @@ export default class operationImage {
 
     this.container.appendChild(_div)
     let _bgImg = document.querySelector('.cropper-view-box>img')
-
+    _bgImg.setAttribute('crossOrigin', 'anonymous')
     let imageInfo = this.imageList[this.currentIndex]
     if (imageInfo.operateStackIndex === -1) {
       _bgImg.src = imageInfo.origin
