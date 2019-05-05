@@ -28,6 +28,12 @@ export default class operationImage {
       }
     })
     this.imageList = Object.assign([], imageList)
+    //刷新图片缓存
+    this.imageList.forEach((I,i)=>{
+      let img = new Image()
+      img.crossOrigin = "anonymous";
+      img.src = I + '&t='+Date.now()
+    })
 
     this.initImagePrototype()
 
@@ -68,7 +74,7 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin + '?t='+Date.now()
+        img.src = imageInfo.origin
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
