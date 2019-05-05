@@ -622,6 +622,7 @@ export default {
 
     .flexbox{
         display:flex;
+        text-align: center;
         .flex-item{
             flex:1;
         }
