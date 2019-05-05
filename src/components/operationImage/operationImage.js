@@ -447,9 +447,9 @@ export default class operationImage {
     let _imageInfo = this.imageList[this.currentIndex]
     
     let X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X,
-      Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y;
+      Y = parseInt(_imageInfo.borderlineValue.top) - parseInt(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y;
       console.log("_imageInfo.borderlineValue.top:::", _imageInfo.borderlineValue.top)
-      console.log("parseFloat(cropperCropBox.style.top):::", parseFloat(cropperCropBox.style.top))
+      console.log("parseFloat(cropperCropBox.style.top):::", parseInt(cropperCropBox.style.top))
       console.log("this.cropperCropBoxTranslate3d.Y:::", this.cropperCropBoxTranslate3d.Y)
     viewBoxImg.style.transform = 'translate3d(' + X + 'px, ' + Y + 'px,0px) rotateZ(0deg)'
   }
