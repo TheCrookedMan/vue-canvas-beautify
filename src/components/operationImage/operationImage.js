@@ -68,13 +68,10 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        alert(1)
         img.src = imageInfo.origin
       } else {
-        alert(2)
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
-      alert("imageInfo::::" + JSON.stringify(imageInfo))
       
     })
   }
@@ -689,21 +686,14 @@ export default class operationImage {
 
   }
   beginColorHandle(){
-    alert("开始去色!")
     this.loadImage().then(_ => {
-      alert("原图加载成功!")
       this.drawCanvasPanel()
-
       this.operationColorHD()
     })
   }
   operationColorHD(){
-    alert("运行去色算法！")
     let _imageInfo = this.imageList[this.currentIndex];
-    alert("_imageInfo.image.width:::", _imageInfo.image.width)
-    alert(JSON.stringify(_imageInfo))
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
-    alert(imgdata.length)
     var data = imgdata.data;
     /*灰度处理：求r，g，b的均值，并赋回给r，g，b*/
     for (var i = 0, n = data.length; i < n; i += 4) {
@@ -721,7 +711,6 @@ export default class operationImage {
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
   sureColorHandle(){
-    alert("确定去色!")
     let colorHandleImage = this.canvas.toDataURL("image/jpeg", 1.0)
 
     this.clearCanvas()
