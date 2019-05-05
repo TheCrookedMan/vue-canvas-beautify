@@ -686,12 +686,16 @@ export default class operationImage {
 
   }
   beginColorHandle(){
+    alert("开始去色!")
     this.loadImage().then(_ => {
+      alert("原图加载成功!")
       this.drawCanvasPanel()
+
       this.operationColorHD()
     })
   }
   operationColorHD(){
+    alert("运行去色算法！")
     let _imageInfo = this.imageList[this.currentIndex];
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
     var data = imgdata.data;
@@ -711,7 +715,7 @@ export default class operationImage {
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
   sureColorHandle(){
-    
+    alert("确定去色!")
     let colorHandleImage = this.canvas.toDataURL("image/jpeg", 1.0)
 
     this.clearCanvas()
