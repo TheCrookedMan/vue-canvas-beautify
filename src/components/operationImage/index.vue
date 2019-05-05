@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="header" ref="header">
+        <div class="beautify-header" ref="header">
             <i class="iconfont icon-back" @click.native="cancel"></i>
             <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click.stop.prevent="preOperateStack"></i>
             <i class="iconfont icon-advance icon-display" v-else></i>
@@ -8,8 +8,8 @@
             <i class="iconfont icon-retreat icon-display" v-else></i>
             <span class="btn-save" @click.native="submit">保存</span>
         </div>
-        <div class="body" ref="body"></div>
-        <div class="footer" ref="footer">
+        <div class="beautify-body" ref="body"></div>
+        <div class="beautify-footer" ref="footer">
             <div class="main-control-panel flexbox" ref="mainControlPanel">
                 <div class="flex-item" @click.stop.prevent="crop">
                     <i class="iconfont icon-crop"></i>
@@ -174,7 +174,7 @@ export default {
         
     },
     mounted() {
-        this.operationImage = new operationImage(this.imageList,document.getElementsByClassName('body')[0])
+        this.operationImage = new operationImage(this.imageList,document.getElementsByClassName('beautify-body')[0])
         let self = this
         this.operationImage.onOperateStackChange = function(){
             self.operateStack = self.operationImage.imageList[self.operationImage.currentIndex].operateStack
@@ -308,7 +308,7 @@ export default {
     background: color(#fff);
     color: #000;
 
-    .header {
+    .beautify-header {
         height: 40px;
         width: 100%;
         position: relative;
@@ -352,7 +352,7 @@ export default {
 
     }
 
-    .body {
+    .beautify-body {
         flex: 1;
         overflow: hidden;
         text-align: center;
@@ -362,7 +362,7 @@ export default {
         position: relative;
     }
 
-    .footer {
+    .beautify-footer {
         .main-control-panel {
             padding: 10px 0px 5px;
             .flex-item {
