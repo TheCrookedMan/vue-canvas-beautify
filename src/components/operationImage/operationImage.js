@@ -49,10 +49,9 @@ export default class operationImage {
     this.canvasContainerDiv.appendChild(this.canvas)
   }
   loadImage() {
-    // let img = new Image(),
-    let img = document.createElement('img'),
+    let img = new Image(),
       self = this;
-    img.setAttribute('crossOrigin', 'anonymous');
+    img.crossOrigin = "Anonymous";
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         self.imageList[self.currentIndex]['image'] = this
