@@ -698,6 +698,7 @@ export default class operationImage {
     alert("运行去色算法！")
     let _imageInfo = this.imageList[this.currentIndex];
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    alert(imgdata.length)
     var data = imgdata.data;
     /*灰度处理：求r，g，b的均值，并赋回给r，g，b*/
     for (var i = 0, n = data.length; i < n; i += 4) {
