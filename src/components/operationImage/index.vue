@@ -8,7 +8,8 @@
             <i class="iconfont icon-retreat icon-display" v-else></i>
             <span class="btn-save" @click.native="submit">保存</span>
         </div>
-        <div class="beautify-body" ref="body"></div>
+        <div class="beautify-body" ref="body">
+        </div>
         <div class="beautify-footer" ref="footer">
             <div class="main-control-panel flexbox" ref="mainControlPanel">
                 <div class="flex-item" @click.stop.prevent="crop">
