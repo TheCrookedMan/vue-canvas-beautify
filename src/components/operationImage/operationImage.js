@@ -127,7 +127,7 @@ export default class operationImage {
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     let imageInfo = this.imageList[this.currentIndex]
     if (imageInfo.operateStackIndex === -1) {
-      _bgImg.src = imageInfo.origin + '?t=' + self.timeStamp
+      _bgImg.src = imageInfo.origin + '?t=' + this.timeStamp
     } else {
       _bgImg.src = imageInfo.operateStack[imageInfo.operateStackIndex]
     }
