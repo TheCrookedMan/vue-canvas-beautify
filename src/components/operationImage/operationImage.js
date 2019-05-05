@@ -71,6 +71,7 @@ export default class operationImage {
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
+      alert("img.src::::", img.src)
       
     })
   }
