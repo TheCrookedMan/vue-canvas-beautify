@@ -70,7 +70,7 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin + '?t=' + self.timeStamp
+        img.src = imageInfo.origin + '?t=' + Date.now()
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
@@ -127,7 +127,7 @@ export default class operationImage {
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     let imageInfo = this.imageList[this.currentIndex]
     if (imageInfo.operateStackIndex === -1) {
-      _bgImg.src = imageInfo.origin + '?t=' + this.timeStamp
+      _bgImg.src = imageInfo.origin + '?t=' + Date.now()
     } else {
       _bgImg.src = imageInfo.operateStack[imageInfo.operateStackIndex]
     }
@@ -447,10 +447,7 @@ export default class operationImage {
     let _imageInfo = this.imageList[this.currentIndex]
     
     let X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X,
-      Y = parseInt(_imageInfo.borderlineValue.top) - parseInt(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y;
-      console.log("_imageInfo.borderlineValue.top:::", _imageInfo.borderlineValue.top)
-      console.log("parseFloat(cropperCropBox.style.top):::", parseInt(cropperCropBox.style.top))
-      console.log("this.cropperCropBoxTranslate3d.Y:::", this.cropperCropBoxTranslate3d.Y)
+      Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y;
     viewBoxImg.style.transform = 'translate3d(' + X + 'px, ' + Y + 'px,0px) rotateZ(0deg)'
   }
 
