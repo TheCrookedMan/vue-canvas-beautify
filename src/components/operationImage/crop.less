@@ -1,0 +1,157 @@
+@import './iconfont/iconfont.less';
+
+.cropper-wrap-box{
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow: hidden;
+    .cropper-crop {
+        cursor: crosshair;
+    }
+    .cropper-modal{
+        background-color: #000;
+        opacity: .5;
+    }
+    .cropper-drag-box{
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .cropper-crop-box{
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        //线宽
+        @border-line-width: 2px;
+        .cropper-view-box{
+            display: block;
+            height: 100%;
+            outline-color: #fff;
+            outline: @border-line-width solid #fff;
+            overflow: hidden;
+            width: 100%;
+        }
+        .cropper-dashed {
+          border: 0 solid #fff;
+          display: block;
+          opacity: .7;
+          position: absolute;
+          &.dashed-h {
+            border-bottom-width: @border-line-width;
+            border-top-width: @border-line-width;
+            height: 33.33333%;
+            left: 0;
+            top: 33.33333%;
+            width: 100%;
+          }
+          &.dashed-v {
+            border-left-width: @border-line-width;
+            border-right-width: @border-line-width;
+            height: 100%;
+            left: 33.33333%;
+            top: 0;
+            width: 33.33333%;
+          }
+        }
+        .cropper-move {
+          cursor: move;
+        }
+        .cropper-face {
+          background-color: #fff;
+          left: 0;
+          top: 0;
+              display: block;
+              height: 100%;
+              opacity: .1;
+              position: absolute;
+              width: 100%;
+        }
+        @border-outline-width: 10px;
+        .cropper-line {
+          display: block;
+          height: 100%;
+          opacity: .1;
+          position: absolute;
+          &.line-e {
+            cursor: ew-resize;
+            right: -3px;
+            top: 0;
+            width: 5px;
+            padding-left: @border-outline-width;
+          }
+
+          &.line-n {
+            cursor: ns-resize;
+            height: 5px;
+            left: 0;
+            top: -3px;
+            width: 100%;
+            padding-bottom: @border-outline-width;
+          }
+
+          &.line-w {
+            cursor: ew-resize;
+            left: -3px;
+            top: 0;
+            width: 5px;
+            padding-right: @border-outline-width;
+          }
+
+          &.line-s {
+            bottom: -3px;
+            cursor: ns-resize;
+            height: 5px;
+            left: 0;
+            width: 100%;
+            padding-top: @border-outline-width;
+          }
+        }
+        //边框厚度
+        @border-width: 5px;
+        //边框长度
+        @border-long: 15px;
+
+        .cropper-point {
+          display: block;
+          position: absolute;
+          &.point-ne {
+            border-top: @border-width solid #fff;
+            border-right: @border-width solid #fff;
+            width: @border-long;
+            top: -@border-width;
+            height: @border-long;
+            right: -@border-width;
+          }
+          &.point-nw {
+            border-top: @border-width solid #fff;
+            border-left: @border-width solid #fff;
+            width: @border-long;
+            top: -@border-width;
+            height: @border-long;
+            left: -@border-width;
+          }
+          &.point-sw {
+            border-bottom: @border-width solid #fff;
+            border-left: @border-width solid #fff;
+            width: @border-long;
+            bottom: -@border-width;
+            height: @border-long;
+            left: -@border-width;
+          }
+          &.point-se {
+            border-bottom: @border-width solid #fff;
+            border-right: @border-width solid #fff;
+            width: @border-long;
+            bottom: -@border-width;
+            height: @border-long;
+            right: -@border-width;
+          }
+        }
+    }
+}
