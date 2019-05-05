@@ -68,7 +68,7 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin
+        img.src = imageInfo.origin + 't='+Date.now()
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
