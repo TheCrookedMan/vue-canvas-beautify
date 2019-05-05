@@ -20,6 +20,8 @@ export default class operationImage {
     //裁切框最小高度
     this.cropMinH = cropMinH
 
+    this.timeStamp = Date.now()
+
     imageList.forEach((I, i) => {
       if (!I.origin && '[object Object]' !== Object.prototype.toString.call(I)) {
         imageList[i] = {
@@ -68,7 +70,7 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin
+        img.src = imageInfo.origin + '?t=' + self.timeStamp
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
@@ -125,7 +127,7 @@ export default class operationImage {
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     let imageInfo = this.imageList[this.currentIndex]
     if (imageInfo.operateStackIndex === -1) {
-      _bgImg.src = imageInfo.origin
+      _bgImg.src = imageInfo.origin + '?t=' + self.timeStamp
     } else {
       _bgImg.src = imageInfo.operateStack[imageInfo.operateStackIndex]
     }
