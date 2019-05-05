@@ -697,6 +697,7 @@ export default class operationImage {
   operationColorHD(){
     alert("运行去色算法！")
     let _imageInfo = this.imageList[this.currentIndex];
+    alert("_imageInfo.image.width:::", _imageInfo.image.width)
     alert(JSON.stringify(_imageInfo))
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
     alert(imgdata.length)
