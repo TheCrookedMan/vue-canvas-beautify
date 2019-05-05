@@ -61,7 +61,8 @@ export default class operationImage {
         self.context.drawImage(this, 0, 0)
         resolve()
       }
-      img.onerror = function () {
+      img.onerror = function (error) {
+        console.log("img load error::::",error)
         reject()
       }
       let imageInfo = self.imageList[self.currentIndex]
