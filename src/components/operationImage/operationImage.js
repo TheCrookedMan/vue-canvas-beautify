@@ -701,6 +701,7 @@ export default class operationImage {
       data[i + 1] = average;
       data[i + 2] = average;
     }
+    console.log("imgdata::::", imgdata.length)
     this.context.putImageData(imgdata, 0, 0);
   }
   cancelColorHandle(){
