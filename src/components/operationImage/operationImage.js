@@ -552,7 +552,7 @@ export default class operationImage {
     this.clickSize = []
 
     this.curTool = 'pencil'
-    this.curColor = '#f3af3b'
+    this.curColor = '#ffffff'
     this.curSize = 'L'
   }
   //开始涂鸦
@@ -600,15 +600,15 @@ export default class operationImage {
     var i = 0;
     for (; i < this.clickX.length; i++) {
       if (this.clickSize[i] == "S") {
-        radius = 6;
-      } else if (this.clickSize[i] == "M") {
         radius = 10;
+      } else if (this.clickSize[i] == "M") {
+        radius = 28;
       } else if (this.clickSize[i] == "L") {
-        radius = 14;
+        radius = 38;
       } else if (this.clickSize[i] == "XL") {
-        radius = 18;
+        radius = 48;
       } else if (this.clickSize[i] == "XXL") {
-        radius = 22;
+        radius = 58;
       } else {
         alert("Error: Radius is zero for click " + i);
         radius = 0;

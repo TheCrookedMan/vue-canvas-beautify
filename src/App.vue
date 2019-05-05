@@ -17,7 +17,7 @@ export default {
     name: 'app',
     data(){
       return {
-        imageList: [__2,__1,__3]
+        imageList: [__2]
       }
     },
     components: {
