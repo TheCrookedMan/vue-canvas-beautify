@@ -70,7 +70,7 @@ export default class operationImage {
       }
       let imageInfo = self.imageList[self.currentIndex]
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin + '?t=' + Date.now()
+        img.src = imageInfo.origin + '?t=' + self.timeStamp
       } else {
         img.src = imageInfo.operateStack[imageInfo.operateStackIndex]
       }
@@ -127,7 +127,7 @@ export default class operationImage {
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     let imageInfo = this.imageList[this.currentIndex]
     if (imageInfo.operateStackIndex === -1) {
-      _bgImg.src = imageInfo.origin + '?t=' + Date.now()
+      _bgImg.src = imageInfo.origin + '?t=' + this.timeStamp
     } else {
       _bgImg.src = imageInfo.operateStack[imageInfo.operateStackIndex]
     }

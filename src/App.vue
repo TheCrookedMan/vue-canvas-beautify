@@ -17,7 +17,7 @@ export default {
     name: 'app',
     data(){
       return {
-        imageList: [__2,__1,__3]
+        imageList: ['http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1,__3]
       }
     },
     components: {
