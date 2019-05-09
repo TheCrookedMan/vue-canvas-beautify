@@ -1,12 +1,12 @@
 <template>
     <div class="container">
         <div class="beautify-header" ref="header">
-            <i class="iconfont icon-back" @click.native="cancel"></i>
+            <span class="btn-cancel" @click.stop.prevent="cancel">返回</span>
             <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click.stop.prevent="preOperateStack"></i>
             <i class="iconfont icon-advance icon-display" v-else></i>
             <i class="iconfont icon-retreat" v-if="operateStack.length > 0 && operateStackIndex < operateStack.length - 1" @click.stop.prevent="nextOperateStack"></i>
             <i class="iconfont icon-retreat icon-display" v-else></i>
-            <span class="btn-save" @click.native="submit">保存</span>
+            <span class="btn-save" @click.stop.prevent="submit">保存</span>
         </div>
         <div class="beautify-body" ref="body">
         </div>
@@ -28,14 +28,14 @@
             <div class="crop-control-panel" ref="cropControlPanel">
                 <div class="crop-operation-panel">
                     <div class="crop-operation-list">
-                        <!-- <div class="crop-operation-item">
+                        <div class="crop-operation-item" @click.stop.prevent="rotate">
                             <i class="iconfont icon-xuanzhuan"></i>
                             <p>旋转</p>
                         </div>
-                        <div class="crop-operation-item">
+                        <div class="crop-operation-item" @click.stop.prevent="reverse">
                             <i class="iconfont icon-fanzhuan"></i>
                             <p>翻转</p>
-                        </div> -->
+                        </div>
                         <div class="crop-operation-item" :class="{checked:'freedom' === currentCropType}" @click.stop.prevent="chooseCropViewBox('freedom')">
                             <i class="iconfont icon-ziyou-"></i>
                             <p>自由</p>
@@ -291,8 +291,16 @@ export default {
             this.$emit('cancel')
         },
         submit(ev){
+            let list = this.operationImage.returnImageList()
+            console.log("list::::",list)
             this.$emit('submit',{})
         },
+        rotate(){
+            this.operationImage.rotate()
+        },
+        reverse(){
+            this.operationImage.reverse()
+        }
     }
 }
 </script>
@@ -315,13 +323,13 @@ export default {
         height: 40px;
         width: 100%;
         position: relative;
-        .icon-back {
-            position: absolute;
-            height: 20px;
-            top: 10px;
-            left: 10px;
-            font-size: 24px;
-        }
+        // .icon-back {
+        //     position: absolute;
+        //     height: 20px;
+        //     top: 10px;
+        //     left: 10px;
+        //     font-size: 24px;
+        // }
 
         .icon-advance {
             position: absolute;
@@ -337,6 +345,16 @@ export default {
             top: 10px;
             font-size: 24px;
             margin-left: 15px;
+        }
+
+        .btn-cancel{
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            height: 20px;
+            line-height: 24px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .btn-save {
@@ -391,7 +409,7 @@ export default {
             -webkit-overflow-scrolling:touch;
             .crop-operation-list{
                 overflow: hidden;
-                width: 480px;
+                width: 600px;
                 .crop-operation-item{
                     display: inline-block;
                     float: left;
