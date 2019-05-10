@@ -731,11 +731,11 @@ console.log("左上~~~~")
       if (this.clickSize[i] == "S") {
         radius = 10;
       } else if (this.clickSize[i] == "M") {
-        radius = 28;
+        radius = 18;
       } else if (this.clickSize[i] == "L") {
-        radius = 38;
+        radius = 26;
       } else if (this.clickSize[i] == "XL") {
-        radius = 48;
+        radius = 40;
       } else if (this.clickSize[i] == "XXL") {
         radius = 58;
       } else {
