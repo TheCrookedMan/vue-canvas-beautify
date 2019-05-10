@@ -75,8 +75,12 @@ export default class operationImage {
       let imageInfo = self.imageList[self.currentIndex]
       
       if (imageInfo.operateStackIndex === -1) {
-        img.src = imageInfo.origin + '?t=' + self.timeStamp
-        // img.src = imageInfo.origin
+        console.log("Object.prototype.toString.call(imageInfo.origin):::", Object.prototype.toString.call(imageInfo.origin))
+        if ("[object Base64]" === Object.prototype.toString.call(imageInfo.origin)) {
+          img.src = imageInfo.origin + '?t=' + self.timeStamp
+        } else {
+          img.src = imageInfo.origin
+        }
       } else {
         __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
         img.src = __url
