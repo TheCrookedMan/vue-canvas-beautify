@@ -76,7 +76,7 @@ export default class operationImage {
       
       if (imageInfo.operateStackIndex === -1) {
         console.log("Object.prototype.toString.call(imageInfo.origin):::", Object.prototype.toString.call(imageInfo.origin))
-        if ("[object Base64]" === Object.prototype.toString.call(imageInfo.origin)) {
+        if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else {
           img.src = imageInfo.origin
