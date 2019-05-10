@@ -292,8 +292,9 @@ export default {
         },
         submit(ev){
             let list = this.operationImage.returnImageList()
-            console.log("list::::",list)
-            this.$emit('submit',{})
+            this.$emit('submit',{
+                imageList : list
+            })
         },
         rotate(){
             this.operationImage.rotate()
