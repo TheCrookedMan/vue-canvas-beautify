@@ -756,7 +756,7 @@ console.log("左上~~~~")
       if (this.clickTool[i] == "rubber") {
         context.globalCompositeOperation = "destination-out";
         context.strokeStyle = 'white';
-        radius = 40;
+        radius = 70;
       } else {
         context.globalCompositeOperation = "source-over";
         context.strokeStyle = this.clickColor[i];
