@@ -132,8 +132,11 @@ export default class operationImage {
           case 6:
             canvas.width = imgFile.height
             canvas.height = imgFile.width
-            ctx.transform(Math.cos(deg * 90), Math.sin(deg * 90), -Math.sin(deg * 90), Math.cos(deg * 90), imgFile.height, 0);
-            ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
+
+            ctx.translate(canvas.width / 2, canvas.height / 2)
+            ctx.rotate(90 * (Math.PI / 180));
+            ctx.drawImage(imgFile, -(canvas.height / 2), -(canvas.width / 2))
+
             canvas.toBlob(function (result) {
               resolve(result)
             }, 'image/webp', 1.0)
