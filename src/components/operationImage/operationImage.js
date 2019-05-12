@@ -62,36 +62,32 @@ export default class operationImage {
       img.onload = function () {
         URL.revokeObjectURL(__url);
 
-        self.imageList[self.currentIndex]['image'] = this
-        self.canvas.height = this.height
-        self.canvas.width = this.width
-        self.container.appendChild(self.canvasContainerDiv)
-        self.context = self.canvas.getContext("2d")
-        self.context.drawImage(this, 0, 0)
+        
 
+        self.autoRotateImage(this).then((blob)=>{
 
-        EXIF.getData(this, function () {
-          let Orientation = EXIF.getTag(this, "Orientation");
-console.log("Orientation:::", Orientation)
-          switch (Orientation) {
-            case 3:
-              self.imageList[self.currentIndex]['imageRotateDeg'] = 90
-              self.rotateCanvas()
-              break;
-            case 6:
-              self.imageList[self.currentIndex]['imageRotateDeg'] = 180
-              self.rotateCanvas()
-              break;
-            case 8:
-              self.imageList[self.currentIndex]['imageRotateDeg'] = 270
-              self.rotateCanvas()
-              break;
-            default:
-              break;
+          let autoRotateURL = URL.createObjectURL(blob)
+          let blobImg = new Image()
+          blobImg.onload = function(){
+            URL.revokeObjectURL(autoRotateURL);
+            self.imageList[self.currentIndex]['image'] = this
+            self.canvas.height = this.height
+            self.canvas.width = this.width
+            self.container.appendChild(self.canvasContainerDiv)
+            self.context = self.canvas.getContext("2d")
+            self.context.drawImage(this, 0, 0)
           }
-        })
+          blobImg.src = autoRotateURL
 
-        resolve()
+        },(result)=>{
+          self.imageList[self.currentIndex]['image'] = result
+          self.canvas.height = result.height
+          self.canvas.width = result.width
+          self.container.appendChild(self.canvasContainerDiv)
+          self.context = self.canvas.getContext("2d")
+          self.context.drawImage(result, 0, 0)
+          resolve()
+        })
       }
       img.onerror = function (error) {
         console.log("img load error::::",error)
@@ -100,7 +96,6 @@ console.log("Orientation:::", Orientation)
       let imageInfo = self.imageList[self.currentIndex]
       
       if (imageInfo.operateStackIndex === -1) {
-        console.log("Object.prototype.toString.call(imageInfo.origin):::", Object.prototype.toString.call(imageInfo.origin))
         if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else {
@@ -110,6 +105,51 @@ console.log("Orientation:::", Orientation)
         __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
         img.src = __url
       }
+    })
+  }
+  //根据图片拍摄角度自动纠正
+  autoRotateImage(imgFile){
+    return new Promise((resolve,reject)=>{
+      let Orientation = null,
+        canvas = document.createElement('canvas'),
+        ctx = canvas.getContext("2d"),
+        deg = Math.PI / 180;
+
+      EXIF.getData(imgFile, function () {
+        Orientation = EXIF.getTag(this, "Orientation");
+        switch (Orientation) {
+          case 3:
+            canvas.width = imgFile.width
+            canvas.height = imgFile.height
+            ctx.transform(Math.cos(Math.PI), Math.sin(Math.PI), -Math.sin(Math.PI), Math.cos(Math.PI), imgFile.width, imgFile.height);
+            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            canvas.toBlob(function(result){
+              resolve(result)
+            }, 'image/webp', 1.0)
+            break;
+          case 6:
+            canvas.width = imgFile.height
+            canvas.height = imgFile.width
+            ctx.transform(Math.cos(deg * 90), Math.sin(deg * 90), -Math.sin(deg * 90), Math.cos(deg * 90), imgFile.height, 0);
+            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            canvas.toBlob(function (result) {
+              resolve(result)
+            }, 'image/webp', 1.0)
+            break;
+          case 8:
+            canvas.width = imgFile.height
+            canvas.height = imgFile.width
+            ctx.transform(Math.cos(deg * 270), Math.sin(deg * 270), -Math.sin(deg * 270), Math.cos(deg * 270), 0, imgFile.width);
+            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            canvas.toBlob(function (result) {
+              resolve(result)
+            }, 'image/webp', 1.0)
+            break;
+          default:
+            reject(imgFile)
+            break;
+        }
+      })
     })
   }
   calcProportion(width, height) {
