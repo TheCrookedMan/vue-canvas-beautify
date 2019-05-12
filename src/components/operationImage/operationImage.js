@@ -70,7 +70,7 @@ export default class operationImage {
         self.context.drawImage(this, 0, 0)
 
 
-        EXIF.getData(this.result, function () {
+        EXIF.getData(this, function () {
           Orientation = EXIF.getTag(this, "Orientation");
 console.log("Orientation:::", Orientation)
           switch (Orientation) {
