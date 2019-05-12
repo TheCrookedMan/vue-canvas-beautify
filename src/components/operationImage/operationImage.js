@@ -1,4 +1,5 @@
 import './crop.less'
+import EXIF from 'exif-js'
 
 export default class operationImage {
   constructor(imageList = [], container, cropModel = 'freedom', cropMinW = 50, cropMinH = 50) {
@@ -60,12 +61,36 @@ export default class operationImage {
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         URL.revokeObjectURL(__url);
+
         self.imageList[self.currentIndex]['image'] = this
         self.canvas.height = this.height
         self.canvas.width = this.width
         self.container.appendChild(self.canvasContainerDiv)
         self.context = self.canvas.getContext("2d")
         self.context.drawImage(this, 0, 0)
+
+
+        EXIF.getData(this.result, function () {
+          Orientation = EXIF.getTag(this, "Orientation");
+
+          switch (Orientation) {
+            case 3:
+              self.imageList[self.currentIndex]['imageRotateDeg'] = 90
+              self.rotateCanvas()
+              break;
+            case 6:
+              self.imageList[self.currentIndex]['imageRotateDeg'] = 180
+              self.rotateCanvas()
+              break;
+            case 8:
+              self.imageList[self.currentIndex]['imageRotateDeg'] = 270
+              self.rotateCanvas()
+              break;
+            default:
+              break;
+          }
+        })
+
         resolve()
       }
       img.onerror = function (error) {
