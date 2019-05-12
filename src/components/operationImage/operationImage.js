@@ -124,7 +124,7 @@ export default class operationImage {
             canvas.width = imgFile.width
             canvas.height = imgFile.height
             ctx.transform(Math.cos(Math.PI), Math.sin(Math.PI), -Math.sin(Math.PI), Math.cos(Math.PI), imgFile.width, imgFile.height);
-            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
             canvas.toBlob(function(result){
               resolve(result)
             }, 'image/webp', 1.0)
@@ -133,7 +133,7 @@ export default class operationImage {
             canvas.width = imgFile.height
             canvas.height = imgFile.width
             ctx.transform(Math.cos(deg * 90), Math.sin(deg * 90), -Math.sin(deg * 90), Math.cos(deg * 90), imgFile.height, 0);
-            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
             canvas.toBlob(function (result) {
               resolve(result)
             }, 'image/webp', 1.0)
@@ -142,7 +142,7 @@ export default class operationImage {
             canvas.width = imgFile.height
             canvas.height = imgFile.width
             ctx.transform(Math.cos(deg * 270), Math.sin(deg * 270), -Math.sin(deg * 270), Math.cos(deg * 270), 0, imgFile.width);
-            ctx.drawImage(imgFile, 0, 0, imgFile.width, imgFile.height)
+            ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
             canvas.toBlob(function (result) {
               resolve(result)
             }, 'image/webp', 1.0)

@@ -12,12 +12,13 @@ import operationImage from './components/operationImage/index.vue'
 import __1 from './assets/1.png'
 import __2 from './assets/2.jpeg'
 import __3 from './assets/3.jpeg'
+import __4 from './assets/WechatIMG65.jpeg'
 
 export default {
     name: 'app',
     data(){
       return {
-        imageList: ['http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1,__3]
+        imageList: [__4,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1,__3]
       }
     },
     components: {
