@@ -72,7 +72,7 @@ export default class operationImage {
 
         EXIF.getData(this.result, function () {
           Orientation = EXIF.getTag(this, "Orientation");
-
+console.log("Orientation:::", Orientation)
           switch (Orientation) {
             case 3:
               self.imageList[self.currentIndex]['imageRotateDeg'] = 90
