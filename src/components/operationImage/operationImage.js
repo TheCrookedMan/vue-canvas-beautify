@@ -71,7 +71,7 @@ export default class operationImage {
 
 
         EXIF.getData(this, function () {
-          Orientation = EXIF.getTag(this, "Orientation");
+          let Orientation = EXIF.getTag(this, "Orientation");
 console.log("Orientation:::", Orientation)
           switch (Orientation) {
             case 3:
