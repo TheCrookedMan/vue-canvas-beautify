@@ -117,6 +117,7 @@ export default class operationImage {
 
       EXIF.getData(imgFile, function () {
         Orientation = EXIF.getTag(this, "Orientation");
+        console.log("Orientation::::", Orientation)
         console.log("imgFile.width", imgFile.width)
         console.log("imgFile.height", imgFile.height)
         switch (Orientation) {
