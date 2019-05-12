@@ -70,6 +70,8 @@ export default class operationImage {
           let blobImg = new Image()
           blobImg.onload = function(){
             URL.revokeObjectURL(autoRotateURL);
+            console.log("this.height::::", this.height)
+            console.log("this.width::::", this.width)
             self.imageList[self.currentIndex]['image'] = this
             self.canvas.height = this.height
             self.canvas.width = this.width
