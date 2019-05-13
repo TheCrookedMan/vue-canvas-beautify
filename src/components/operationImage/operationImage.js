@@ -60,12 +60,9 @@ export default class operationImage {
     img.crossOrigin = "anonymous";
     return new Promise(function (resolve, reject) {
       img.onload = function () {
-        URL.revokeObjectURL(__url);
-
+        // URL.revokeObjectURL(__url);
         
-
         self.autoRotateImage(this).then((blob)=>{
-
           let autoRotateURL = URL.createObjectURL(blob)
           let blobImg = new Image()
           blobImg.onload = function(){
@@ -96,7 +93,6 @@ export default class operationImage {
         reject()
       }
       let imageInfo = self.imageList[self.currentIndex]
-      
       if (imageInfo.operateStackIndex === -1) {
         if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
@@ -104,8 +100,12 @@ export default class operationImage {
           img.src = imageInfo.origin
         }
       } else {
-        __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
-        img.src = __url
+        // __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+        let oReader = new FileReader()
+        oReader.onload = function(e){
+          img.src = e.target.result
+        }
+        oReader.readAsDataURL(imageInfo.operateStack[imageInfo.operateStackIndex])
       }
     })
   }
@@ -667,7 +667,6 @@ console.log("左上~~~~")
         document.querySelector('.cropper-drag-box').remove()
         document.querySelector('#canvasContainerDiv').style.transform = 'inherit'
         document.querySelector('#canvasContainerDiv').style.transition = 'inherit'
-
       }, 'image/webp', self.imageDefinition)
     }
     __img.src = this.rotateCanvas()
