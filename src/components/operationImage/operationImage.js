@@ -219,8 +219,6 @@ export default class operationImage {
       this.container.appendChild(dragBox)
     }
 
-
-
     let cropBoxTemplate = '<div class="cropper-crop-box"><span class="cropper-view-box"><img></span><span class="cropper-dashed dashed-h"></span><span class="cropper-dashed dashed-v"></span><span class="cropper-face cropper-move"></span><span class="cropper-line line-e"></span><span class="cropper-line line-n"></span><span class="cropper-line line-w"></span><span class="cropper-line line-s"></span><span class="cropper-point point-ne"></span><span class="cropper-point point-nw"></span><span class="cropper-point point-sw"></span><span class="cropper-point point-se"></span></div>'
     let _div = document.createElement('div')
     _div.classList.add('cropper-wrap-box')
