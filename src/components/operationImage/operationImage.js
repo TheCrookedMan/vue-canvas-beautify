@@ -9,13 +9,13 @@ export default class operationImage {
       throw new Error('imageList 属性值的类型必须是数组!')
     }
 
-    if (!container){
+    if (!container) {
       throw new Error('container 属性不能为空！')
     }
 
     this.container = container;
     //裁切框模式 ：freedom (自由), 按照比例 3:4 、4:3、9:16、16:9、1:1
-    this.cropModel = cropModel 
+    this.cropModel = cropModel
     //裁切框最小宽度
     this.cropMinW = cropMinW
     //裁切框最小高度
@@ -23,7 +23,10 @@ export default class operationImage {
 
     this.timeStamp = Date.now()
 
+        this.timer;
+        this.imageType = 'image/jpg'
     this.imageDefinition = '1'
+
 
     imageList.forEach((I, i) => {
       if (!I.origin && '[object Object]' !== Object.prototype.toString.call(I)) {
@@ -61,11 +64,11 @@ export default class operationImage {
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         // URL.revokeObjectURL(__url);
-        
-        self.autoRotateImage(this).then((blob)=>{
+
+        self.autoRotateImage(this).then((blob) => {
           let autoRotateURL = URL.createObjectURL(blob)
           let blobImg = new Image()
-          blobImg.onload = function(){
+          blobImg.onload = function () {
             URL.revokeObjectURL(autoRotateURL);
             console.log("this.height::::", this.height)
             console.log("this.width::::", this.width)
@@ -78,7 +81,7 @@ export default class operationImage {
           }
           blobImg.src = autoRotateURL
 
-        },(result)=>{
+        }, (result) => {
           self.imageList[self.currentIndex]['image'] = result
           self.canvas.height = result.height
           self.canvas.width = result.width
@@ -89,7 +92,7 @@ export default class operationImage {
         })
       }
       img.onerror = function (error) {
-        console.log("img load error::::",error)
+        console.log("img load error::::", error)
         reject()
       }
       let imageInfo = self.imageList[self.currentIndex]
@@ -102,7 +105,7 @@ export default class operationImage {
       } else {
         // __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
         let oReader = new FileReader()
-        oReader.onload = function(e){
+        oReader.onload = function (e) {
           img.src = e.target.result
         }
         oReader.readAsDataURL(imageInfo.operateStack[imageInfo.operateStackIndex])
@@ -110,8 +113,9 @@ export default class operationImage {
     })
   }
   //根据图片拍摄角度自动纠正
-  autoRotateImage(imgFile){
-    return new Promise((resolve,reject)=>{
+  autoRotateImage(imgFile) {
+        let self = this
+    return new Promise((resolve, reject) => {
       let Orientation = null,
         canvas = document.createElement('canvas'),
         ctx = canvas.getContext("2d"),
@@ -128,9 +132,9 @@ export default class operationImage {
             canvas.height = imgFile.height
             ctx.transform(Math.cos(Math.PI), Math.sin(Math.PI), -Math.sin(Math.PI), Math.cos(Math.PI), imgFile.width, imgFile.height);
             ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
-            canvas.toBlob(function(result){
+            canvas.toBlob(function (result) {
               resolve(result)
-            }, 'image/webp', 1.0)
+                        }, self.imageType, 1.0)
             break;
           case 6:
             canvas.width = imgFile.height
@@ -142,7 +146,7 @@ export default class operationImage {
 
             canvas.toBlob(function (result) {
               resolve(result)
-            }, 'image/webp', 1.0)
+                        }, self.imageType, 1.0)
             break;
           case 8:
             canvas.width = imgFile.height
@@ -151,7 +155,7 @@ export default class operationImage {
             ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
             canvas.toBlob(function (result) {
               resolve(result)
-            }, 'image/webp', 1.0)
+                        }, self.imageType, 1.0)
             break;
           default:
             reject(imgFile)
@@ -163,21 +167,20 @@ export default class operationImage {
   calcProportion(width, height) {
     let heightProportion = 0,
       widthProportion = 0;
-
-      if (height < (parseInt(this.container.getBoundingClientRect().height) - 10) && width < (parseInt(this.container.getBoundingClientRect().width)) ) {
-        return 1
-      } else {
-        heightProportion = (parseInt(this.container.getBoundingClientRect().height) - 10) / height;
-        widthProportion = (parseInt(this.container.getBoundingClientRect().width) - 10) / width
-        return heightProportion > widthProportion ? widthProportion : heightProportion
-      }
+    if (height < (parseInt(this.container.getBoundingClientRect().height) - 10) && width < (parseInt(this.container.getBoundingClientRect().width))) {
+      return 1
+    } else {
+      heightProportion = (parseInt(this.container.getBoundingClientRect().height) - 10) / height;
+      widthProportion = (parseInt(this.container.getBoundingClientRect().width) - 10) / width
+      return heightProportion > widthProportion ? widthProportion : heightProportion
+    }
   }
-  drawCanvasPanel(){
+  drawCanvasPanel() {
     let _currentImage = this.imageList[this.currentIndex]
     _currentImage.proportion = this.calcProportion(_currentImage.image.width, _currentImage.image.height)
-    
+
     let canvasObj = document.getElementById('drawCanvas')
-    
+
     canvasObj.style.transform = 'scale(' + _currentImage.proportion + ')'
     canvasObj.style.transformOrigin = 'left top'
     this.canvasObj = {
@@ -190,7 +193,7 @@ export default class operationImage {
     this.imageList[this.currentIndex] = _currentImage
   }
   //开始裁切
-  crop(){
+  crop() {
     this.loadImage().then(_ => {
       this.drawCanvasPanel()
       this.createCropBox()
@@ -207,7 +210,7 @@ export default class operationImage {
     }
   }
 
-  createCropBox(){
+  createCropBox() {
     if (!document.querySelector('.cropper-drag-box')) {
       let dragBox = document.createElement('div')
       dragBox.classList.add('cropper-drag-box')
@@ -219,7 +222,7 @@ export default class operationImage {
     let cropperCropBoxInfo = null
     if (!!document.querySelector('.cropper-wrap-box')) {
       cropperCropBoxInfo = document.querySelector('.cropper-crop-box').getBoundingClientRect()
-    
+
       document.querySelector('.cropper-wrap-box').remove()
     }
 
@@ -233,8 +236,13 @@ export default class operationImage {
     _bgImg.src = this.rotateCanvas()
     // _bgImg.src = this.canvas.toDataURL("image/jpeg", 1.0)
 
-    _bgImg.style.width = document.getElementById('canvasContainerDiv').getBoundingClientRect().width + 'px'
-    _bgImg.style.height = document.getElementById('canvasContainerDiv').getBoundingClientRect().height + 'px'
+    if (!!cropperCropBoxInfo) {
+      _bgImg.style.width = cropperCropBoxInfo.width + 'px'
+      _bgImg.style.height = cropperCropBoxInfo.height + 'px'
+    } else {
+      _bgImg.style.width = document.getElementById('canvasContainerDiv').getBoundingClientRect().width + 'px'
+      _bgImg.style.height = document.getElementById('canvasContainerDiv').getBoundingClientRect().height + 'px'
+    }
 
     this.initCropBoxSize(cropperCropBoxInfo)
   }
@@ -243,7 +251,7 @@ export default class operationImage {
       canvas = document.querySelector('#drawCanvas');
 
     let _imageInfo = this.imageList[this.currentIndex]
-    
+
     _imageInfo.borderlineValue = {
       left: canvas.getBoundingClientRect().left,
       right: canvas.getBoundingClientRect().right,
@@ -254,22 +262,23 @@ export default class operationImage {
     }
     //计算裁切框大小
     if (!!cropperCropBoxInfo) {
-      console.log("cropperCropBoxInfo:::", cropperCropBoxInfo)
       cropperCropBox.style.width = cropperCropBoxInfo.width + 'px'
       cropperCropBox.style.height = cropperCropBoxInfo.height + 'px'
       cropperCropBox.style.top = cropperCropBoxInfo.top + 'px'
       cropperCropBox.style.left = cropperCropBoxInfo.left + 'px'
     } else {
+      this.cropperCropBoxTranslate3d = {
+        X: 0,
+        Y: 0
+      }
       if (this.cropModel === 'freedom') {
         cropperCropBox.style.width = _imageInfo.borderlineValue.width + 'px'
         cropperCropBox.style.height = _imageInfo.borderlineValue.height + 'px'
         cropperCropBox.style.top = _imageInfo.borderlineValue.top + 'px'
         cropperCropBox.style.left = _imageInfo.borderlineValue.left + 'px'
-
       } else {
         let scale = this.cropModel.split(":")
         if (scale[0] / scale[1] <= 1) {
-
           let caclWidth = _imageInfo.borderlineValue.height * (scale[0] / scale[1])
           if (caclWidth <= _imageInfo.borderlineValue.width) {
             cropperCropBox.style.width = caclWidth + 'px'
@@ -303,22 +312,20 @@ export default class operationImage {
 
     this.imageList[this.currentIndex] = _imageInfo
 
-    this.cropperCropBoxTranslate3d = {
-      X: 0,
-      Y: 0
-    }
+
     this.calcViewBoxImgXY()
     this.initCropTouchEvent()
   }
 
-  initCropTouchEvent(){
+  initCropTouchEvent() {
     let cropperCropBox = document.querySelector('.cropper-crop-box');
-    
+
     let theCropperMove = document.querySelector('.cropper-face.cropper-move');
 
-    let self = this, _imageInfo = this.imageList[this.currentIndex];
+    let self = this,
+      _imageInfo = this.imageList[this.currentIndex];
 
-    this.theLeftTopTouchMove = function(e){
+    this.theLeftTopTouchMove = function (e) {
 
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
@@ -327,7 +334,7 @@ export default class operationImage {
       let mouseY = pageY - parseFloat(cropperCropBox.getBoundingClientRect().top);
       let minAllowMoveX = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left);
       let minAllowY = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top);
-console.log("左上~~~~")
+      console.log("左上~~~~")
       //自由比例
       if (self.cropModel === 'freedom') {
         if (parseFloat(cropperCropBox.style.width) - mouseX >= self.cropMinW && self.cropperCropBoxTranslate3d.X + mouseX >= minAllowMoveX) {
@@ -360,7 +367,7 @@ console.log("左上~~~~")
       e.preventDefault()
     }
 
-    
+
 
     this.theRightTopTouchMove = function (e) {
       let pageX = e.touches[0].pageX,
@@ -493,7 +500,8 @@ console.log("左上~~~~")
       let mouseX = pageX - parseFloat(cropperCropBox.getBoundingClientRect().left);
       let mouseY = pageY - parseFloat(cropperCropBox.getBoundingClientRect().top);
 
-      let _moveX = self.cropperCropBoxTranslate3d.X + (mouseX - startMovePos['mouseX']), _moveY = self.cropperCropBoxTranslate3d.Y + (mouseY - startMovePos['mouseY']);
+      let _moveX = self.cropperCropBoxTranslate3d.X + (mouseX - startMovePos['mouseX']),
+        _moveY = self.cropperCropBoxTranslate3d.Y + (mouseY - startMovePos['mouseY']);
 
       let minAllowMoveX = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left),
         maxAllowX = _imageInfo.borderlineValue.right - parseFloat(cropperCropBox.style.left) - parseFloat(cropperCropBox.style.width)
@@ -521,7 +529,7 @@ console.log("左上~~~~")
     theCropperMove.addEventListener('touchmove', this.theCropperMoveTouchMove)
   }
 
-  bindCropFourHornEvent(){
+  bindCropFourHornEvent() {
     //左上角
     let theLeftTop = document.querySelector('.cropper-point.point-nw'),
       //右上角
@@ -538,30 +546,30 @@ console.log("左上~~~~")
     theLeftBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
     theRightBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
 
-      // if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 0) {
-      //   theLeftTop.addEventListener('touchmove', this.theLeftTopTouchMove)
-      //   theRightTop.addEventListener('touchmove', this.theRightTopTouchMove)
-      //   theLeftBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
-      //   theRightBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
-      // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
-      //   theRightTop.addEventListener('touchmove', this.theLeftTopTouchMove)
-      //   theRightBottom.addEventListener('touchmove', this.theRightTopTouchMove)
-      //   theLeftTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
-      //   theLeftBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
-      // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
-      //   theRightBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
-      //   theLeftBottom.addEventListener('touchmove', this.theRightTopTouchMove)
-      //   theRightTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
-      //   theLeftTop.addEventListener('touchmove', this.theRightBottomTouchMove)
-      // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
-      //   theLeftBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
-      //   theLeftTop.addEventListener('touchmove', this.theRightTopTouchMove)
-      //   theRightBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
-      //   theRightTop.addEventListener('touchmove', this.theRightBottomTouchMove)
-      // }
+    // if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 0) {
+    //   theLeftTop.addEventListener('touchmove', this.theLeftTopTouchMove)
+    //   theRightTop.addEventListener('touchmove', this.theRightTopTouchMove)
+    //   theLeftBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
+    //   theRightBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
+    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
+    //   theRightTop.addEventListener('touchmove', this.theLeftTopTouchMove)
+    //   theRightBottom.addEventListener('touchmove', this.theRightTopTouchMove)
+    //   theLeftTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
+    //   theLeftBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
+    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
+    //   theRightBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
+    //   theLeftBottom.addEventListener('touchmove', this.theRightTopTouchMove)
+    //   theRightTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
+    //   theLeftTop.addEventListener('touchmove', this.theRightBottomTouchMove)
+    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
+    //   theLeftBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
+    //   theLeftTop.addEventListener('touchmove', this.theRightTopTouchMove)
+    //   theRightBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
+    //   theRightTop.addEventListener('touchmove', this.theRightBottomTouchMove)
+    // }
   }
 
-  destroyCropFourHornEvent(){
+  destroyCropFourHornEvent() {
     //左上角
     let theLeftTop = document.querySelector('.cropper-point.point-nw'),
       //右上角
@@ -603,51 +611,73 @@ console.log("左上~~~~")
     // }
   }
 
-  destroyCropTouchEvent(){
+  destroyCropTouchEvent() {
     this.destroyCropFourHornEvent()
-    
+
     let theCropperMove = document.querySelector('.cropper-face.cropper-move');
 
     theCropperMove.removeEventListener('touchmove', this.theCropperMoveTouchMove)
   }
 
   //计算裁切框中背景图片位置
-  calcViewBoxImgXY(){
-    let viewBoxImg = document.querySelector('.cropper-view-box>img'),cropperCropBox = document.querySelector('.cropper-crop-box');
+  calcViewBoxImgXY() {
+    let viewBoxImg = document.querySelector('.cropper-view-box>img'),
+      cropperCropBox = document.querySelector('.cropper-crop-box')
     let _imageInfo = this.imageList[this.currentIndex]
 
     let X = 0,
       Y = 0;
 
-      X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X
-      Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y
-      viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
-      // viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
+    console.log("cropperCropBox.style.width::::", cropperCropBox.style.width)
+    console.log("cropperCropBox.style.height::::", cropperCropBox.style.height)
+    console.log("cropperCropBox.style.left::::", cropperCropBox.style.left)
+    console.log("cropperCropBox.style.top::::", cropperCropBox.style.top)
+    console.log("cropperCropBox.style.bottom::::", cropperCropBox.style.bottom)
+    console.log("cropperCropBox.style.right::::", cropperCropBox.style.right)
+
+    console.log("this.cropperCropBoxTranslate3d:::::", this.cropperCropBoxTranslate3d)
+
+    console.log("_imageInfo.borderlineValue::::", _imageInfo.borderlineValue)
+
+    X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X
+    Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y
+
+    console.log("X::::", X)
+    console.log("Y::::", Y)
+
+    viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
+    // viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
   }
 
-  sureCropImage(){
-    let cropperCropBox = document.querySelector('.cropper-crop-box'), _imageInfo = this.imageList[this.currentIndex];
-    let imgWidth = (parseFloat(cropperCropBox.style.width) / _imageInfo.proportion) / _imageInfo.canvasScaleProportion,
-      imgHeight = (parseFloat(cropperCropBox.style.height) / _imageInfo.proportion) / _imageInfo.canvasScaleProportion,
+  sureCropImage() {
+    let cropperCropBox = document.querySelector('.cropper-crop-box'),
+      _imageInfo = this.imageList[this.currentIndex];
+    // let imgWidth = (parseFloat(cropperCropBox.style.width) / _imageInfo.proportion) / _imageInfo.canvasScaleProportion,
+    //   imgHeight = (parseFloat(cropperCropBox.style.height) / _imageInfo.proportion) / _imageInfo.canvasScaleProportion,
+    let imgWidth = (parseFloat(cropperCropBox.style.width) / _imageInfo.proportion),
+      imgHeight = (parseFloat(cropperCropBox.style.height) / _imageInfo.proportion),
       cropX = (_imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X) / _imageInfo.proportion,
       cropY = (_imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y) / _imageInfo.proportion;
     cropY = Math.abs(cropY)
     cropX = Math.abs(cropX)
 
+    console.log("_imageInfo.proportion::::", _imageInfo.proportion)
+
     let self = this
 
-    let cropCanvas = document.createElement('Canvas'),cropContext = null;
+    let cropCanvas = document.createElement('Canvas'),
+      cropContext = null;
     cropContext = cropCanvas.getContext('2d')
-  
+
     let __img = new Image()
-    __img.onload = function(){
+    __img.onload = function () {
       cropContext.clearRect(0, 0, this.width, this.height);
       cropCanvas.width = imgWidth
       cropCanvas.height = imgHeight
       cropContext.drawImage(this, cropX, cropY, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight)
 
       // let _cropImage = cropCanvas.toDataURL("image/jpeg", 1.0)
-      cropCanvas.toBlob(function(result){
+      cropCanvas.toBlob(function (result) {
         console.log("result:::", result)
         let _cropImage = result
 
@@ -667,11 +697,11 @@ console.log("左上~~~~")
         document.querySelector('.cropper-drag-box').remove()
         document.querySelector('#canvasContainerDiv').style.transform = 'inherit'
         document.querySelector('#canvasContainerDiv').style.transition = 'inherit'
-      }, 'image/webp', self.imageDefinition)
+            }, self.imageType, self.imageDefinition)
     }
     __img.src = this.rotateCanvas()
   }
-  cancelCropImage(){
+  cancelCropImage() {
     this.destroyCropTouchEvent()
     this.imageList[this.currentIndex]['imageRotateDeg'] = 0
     this.imageList[this.currentIndex]['canvasScaleProportion'] = 1
@@ -682,8 +712,8 @@ console.log("左上~~~~")
   }
 
   //初始化每个图片文件所需要的属性
-  initImagePrototype(){
-    this.imageList.forEach((I,i)=>{
+  initImagePrototype() {
+    this.imageList.forEach((I, i) => {
       this.imageList[i]['borderlineValue'] = {}
       this.imageList[i]['operateStack'] = []
       this.imageList[i]['operateStackIndex'] = -1
@@ -693,7 +723,7 @@ console.log("左上~~~~")
   }
 
   nextImage(callback) {
-    if (++this.currentIndex <= this.maxImageIndex){
+    if (++this.currentIndex <= this.maxImageIndex) {
       this.loadImage().then(_ => {
         this.drawCanvasPanel()
       })
@@ -701,12 +731,11 @@ console.log("左上~~~~")
     } else {
       this.currentIndex = this.maxImageIndex
       callback(this.currentIndex)
-    }
-    !!this.onImageChange && this.onImageChange()
+    }!!this.onImageChange && this.onImageChange()
   }
 
-  preImage(callback){
-    if (--this.currentIndex >= 0){
+  preImage(callback) {
+    if (--this.currentIndex >= 0) {
       this.loadImage().then(_ => {
         this.drawCanvasPanel()
       })
@@ -714,15 +743,14 @@ console.log("左上~~~~")
     } else {
       this.currentIndex = 0
       callback(this.currentIndex)
-    }
-    !!this.onImageChange && this.onImageChange()
+    }!!this.onImageChange && this.onImageChange()
   }
 
-  nextOperateStack(){
+  nextOperateStack() {
     let imageInfo = this.imageList[this.currentIndex]
-    
+
     if (++imageInfo.operateStackIndex <= imageInfo.operateStack.length - 1) {
-      
+
       this.loadImage().then(_ => {
         this.drawCanvasPanel()
       })
@@ -730,7 +758,7 @@ console.log("左上~~~~")
       imageInfo.operateStackIndex = imageInfo.operateStack.length - 1
     }
 
-    this.imageList[this.currentIndex]['operateStackIndex'] = imageInfo.operateStackIndex
+    this.imageList[this.currentIndex]['operateStackIndex'] = imageInfo.operateStackIndex;
     !!this.onImageChange && this.onImageChange()
   }
 
@@ -744,27 +772,27 @@ console.log("左上~~~~")
     } else {
       imageInfo.operateStackIndex = -1
     }
-    this.imageList[this.currentIndex]['operateStackIndex'] = imageInfo.operateStackIndex
+    this.imageList[this.currentIndex]['operateStackIndex'] = imageInfo.operateStackIndex;
     !!this.onImageChange && this.onImageChange()
   }
-  initDoodleOptions(){
-    this.clickX = []
-    this.clickY = []
-    this.clickDrag = []
+  initDoodleOptions() {
 
-    this.clickTool = []
-    this.clickColor = []
-    this.clickSize = []
 
     this.curTool = 'pencil'
     this.curColor = '#ffffff'
     this.curSize = 'L'
   }
   //开始涂鸦
-  beginDoodle(){
+  beginDoodle() {
     this.initDoodleOptions()
-    let self = this,_imageInfo = this.imageList[this.currentIndex]
+    let self = this,
+      _imageInfo = this.imageList[this.currentIndex]
 
+        this.drawCanvas = document.createElement('Canvas')
+        this.drawCanvas.width = _imageInfo.image.width
+        this.drawCanvas.height = _imageInfo.image.height
+        this.drawContext = this.drawCanvas.getContext('2d')
+        this.posList = []
     this.doodleTouchStart = function (e) {
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
@@ -772,8 +800,12 @@ console.log("左上~~~~")
       var mouseY = pageY - self.canvas.getBoundingClientRect().top;
       mouseX = mouseX / _imageInfo.proportion;
       mouseY = mouseY / _imageInfo.proportion;
-      self.addClick(mouseX, mouseY, false);
-      self.redraw();
+            self.posList = []
+            self.posList.push({
+                mouseX: mouseX,
+                mouseY: mouseY
+            })
+            self.drawLine()
       e.preventDefault()
     }
     this.canvas.addEventListener('touchstart', this.doodleTouchStart, false)
@@ -785,81 +817,63 @@ console.log("左上~~~~")
       var mouseY = pageY - self.canvas.getBoundingClientRect().top;
       mouseX = mouseX / _imageInfo.proportion;
       mouseY = mouseY / _imageInfo.proportion;
-      self.addClick(mouseX, mouseY, true);
-      self.redraw();
+
+            self.posList.push({
+                mouseX: mouseX,
+                mouseY: mouseY
+            })
+            if (self.posList.length === 3) {
+                self.posList.shift()
+            }
+            self.drawLine()
       e.preventDefault()
     }
 
     this.canvas.addEventListener('touchmove', this.doodleTouchMove, false)
   }
-  redraw(){
+    drawLine() {
+        let _imageInfo = this.imageList[this.currentIndex];
     this.clearCanvas()
-
-    let _imageInfo = this.imageList[this.currentIndex];
-    
-    let canvas = document.createElement('canvas')
-    canvas.width = _imageInfo.image.width
-    canvas.height = _imageInfo.image.height
-    let context = canvas.getContext("2d");
-    var radius = 0;
-    var i = 0;
-    for (; i < this.clickX.length; i++) {
-      if (this.clickSize[i] == "S") {
-        radius = 10;
-      } else if (this.clickSize[i] == "M") {
-        radius = 18;
-      } else if (this.clickSize[i] == "L") {
-        radius = 26;
-      } else if (this.clickSize[i] == "XL") {
-        radius = 40;
-      } else if (this.clickSize[i] == "XXL") {
-        radius = 58;
-      } else {
-        alert("Error: Radius is zero for click " + i);
-        radius = 0;
+        this.drawContext.beginPath()
+        this.drawContext.moveTo(this.posList[0]['mouseX'], this.posList[0]['mouseY'])
+        if (this.posList.length > 1) {
+            this.drawContext.lineTo(this.posList[1]['mouseX'], this.posList[1]['mouseY']);
       }
 
-      context.beginPath();
-
-      if (this.clickDrag[i] && i) {
-        context.moveTo(this.clickX[i - 1], this.clickY[i - 1]);
-      } else {
-        context.moveTo(this.clickX[i], this.clickY[i]);
+        this.drawContext.closePath();
+        if (this.curTool === 'pencil') {
+            this.drawContext.globalCompositeOperation = "source-over";
+            this.drawContext.strokeStyle = this.curColor;
+            this.drawContext.lineJoin = "round";
+            if (this.curSize === 'S') {
+                this.drawContext.lineWidth = 10;
+            } else if (this.curSize === 'M') {
+                this.drawContext.lineWidth = 25;
+            } else if (this.curSize === 'L') {
+                this.drawContext.lineWidth = 40;
+            } else if (this.curSize === 'XL') {
+                this.drawContext.lineWidth = 55;
+            } else if (this.curSize === 'XXL') {
+                this.drawContext.lineWidth = 70;
       }
-      context.lineTo(this.clickX[i], this.clickY[i]);
-      context.closePath();
 
-      if (this.clickTool[i] == "rubber") {
-        context.globalCompositeOperation = "destination-out";
-        context.strokeStyle = 'white';
-        radius = 70;
       } else {
-        context.globalCompositeOperation = "source-over";
-        context.strokeStyle = this.clickColor[i];
-      }
-      context.lineJoin = "round";
-      context.lineWidth = radius;
-      context.stroke();
+            this.drawContext.globalCompositeOperation = "destination-out";
+            this.drawContext.strokeStyle = '#fff';
+            this.drawContext.lineJoin = "round";
+            this.drawContext.lineWidth = 100;
     }
-    context.restore();
+        this.drawContext.stroke();
 
     // Draw the outline image
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-    this.context.drawImage(canvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+        this.context.drawImage(this.drawCanvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
-  addClick(x, y, dragging) {
-    this.clickX.push(x);
-    this.clickY.push(y);
-    this.clickTool.push(this.curTool);
-    this.clickColor.push(this.curColor);
-    this.clickSize.push(this.curSize);
-    this.clickDrag.push(dragging);
-  }
-  clearCanvas(){
+  clearCanvas() {
     let _imageInfo = this.imageList[this.currentIndex];
     this.context.clearRect(0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
-  setDoodleTool(val){
+  setDoodleTool(val) {
     this.curTool = val
   }
   setDoodleColor(val) {
@@ -868,17 +882,17 @@ console.log("左上~~~~")
   setDoodleSize(val) {
     this.curSize = val
   }
-  cancelDoodleImage(){
+  cancelDoodleImage() {
     this.clearCanvas()
     let _imageInfo = this.imageList[this.currentIndex];
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
     this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
     this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
   }
-  sureDoodleImage(){
+  sureDoodleImage() {
     let self = this
     // let doodleImage = this.canvas.toDataURL("image/jpeg", 1.0)
-    this.canvas.toBlob(function(result){
+    this.canvas.toBlob(function (result) {
       let doodleImage = result
 
       self.clearCanvas()
@@ -890,15 +904,15 @@ console.log("左上~~~~")
       self.loadImage().then(() => {
         self.drawCanvasPanel()
       })
-    }, 'image/webp', self.imageDefinition)
+        }, self.imageType, self.imageDefinition)
   }
-  beginColorHandle(){
+  beginColorHandle() {
     this.loadImage().then(_ => {
       this.drawCanvasPanel()
       this.operationColorHD()
     })
   }
-  operationColorHD(){
+  operationColorHD() {
     let _imageInfo = this.imageList[this.currentIndex];
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
     var data = imgdata.data;
@@ -911,15 +925,15 @@ console.log("左上~~~~")
     }
     this.context.putImageData(imgdata, 0, 0);
   }
-  cancelColorHandle(){
+  cancelColorHandle() {
     this.clearCanvas()
     let _imageInfo = this.imageList[this.currentIndex];
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
-  sureColorHandle(){
+  sureColorHandle() {
     // let colorHandleImage = this.canvas.toDataURL("image/jpeg", 1.0)
     let self = this
-    this.canvas.toBlob(function(result){
+    this.canvas.toBlob(function (result) {
       let colorHandleImage = result
       self.clearCanvas()
 
@@ -928,81 +942,65 @@ console.log("左上~~~~")
       self.loadImage().then(() => {
         self.drawCanvasPanel()
       })
-    },"image/webp", self.imageDefinition)
+        }, self.imageType, self.imageDefinition)
   }
   //图片旋转
-  rotate(){
+  rotate() {
     //解绑之前的四个角绑定的事件
     // this.destroyCropFourHornEvent()
     //重新计算旋转角度
     let _imageInfo = this.imageList[this.currentIndex]
     _imageInfo.imageRotateDeg -= 90
-    
+
     this.imageList[this.currentIndex] = _imageInfo
     //旋转Canvas容器，按比例缩小
     let canvasContainerDiv = document.querySelector('#canvasContainerDiv'),
-    canvasContainerDivPos = canvasContainerDiv.getBoundingClientRect()
+      canvasContainerDivPos = canvasContainerDiv.getBoundingClientRect()
+    canvasContainerDivPos.width = canvasContainerDivPos.width - 10
+    canvasContainerDivPos.height = canvasContainerDivPos.height - 10
+    let containerDivPos = this.container.getBoundingClientRect()
     let canvasScaleProportion = 0,
       preCanvasScaleProportion = _imageInfo.canvasScaleProportion
 
     if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 1) {
-      canvasScaleProportion = ((canvasContainerDivPos.width) / (canvasContainerDivPos.height))
+      let proportionWidth = canvasContainerDivPos.width > containerDivPos.width ? canvasContainerDivPos.width : containerDivPos.width,
+        proportionHeight = canvasContainerDivPos.height > containerDivPos.height ? canvasContainerDivPos.height : containerDivPos.height;
+
+      if (canvasContainerDivPos.width < canvasContainerDivPos.height) {
+        canvasScaleProportion = ((proportionWidth) / (proportionHeight))
+      } else {
+        canvasScaleProportion = (proportionHeight / proportionWidth)
+      }
     } else {
       canvasScaleProportion = 1
     }
     _imageInfo.canvasScaleProportion = canvasScaleProportion
 
+    console.log("canvasScaleProportion::::", canvasScaleProportion)
+
     canvasContainerDiv.style.transform = 'scale(' + canvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
-    canvasContainerDiv.style.transition = 'transform 0.5s'
+    canvasContainerDiv.style.transition = 'transform 0.2s'
     _imageInfo.borderlineValue = canvasContainerDiv.getBoundingClientRect()
 
     this.imageList[this.currentIndex] = _imageInfo
 
     let cropperCropBox = document.querySelector('.cropper-wrap-box');
-    
+
     //如果裁切框scale不为1表示 放大缩小过，所以 再次 变换的时候 就需要还原
     if (preCanvasScaleProportion !== 1) {
-      cropperCropBox.style.transform = 'scale(' + 1 / preCanvasScaleProportion + ') rotateZ(-90deg)'
+      cropperCropBox.style.transform = 'scale(' + 1 / preCanvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
     } else {
-      cropperCropBox.style.transform = 'scale(' + canvasScaleProportion + ') rotateZ(-90deg)'
-      // document.querySelector('.cropper-point.point-ne').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-point.point-nw').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-point.point-sw').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-point.point-se').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // // document.querySelector('.cropper-dashed.dashed-h').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // // document.querySelector('.cropper-dashed.dashed-v').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-
-      // document.querySelector('.cropper-line.line-e').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-line.line-n').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-line.line-w').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-      // document.querySelector('.cropper-line.line-s').style.transform = 'scale(' + 1 / canvasScaleProportion + ')'
-
-
-      
-
-      // document.querySelector('.cropper-point.point-sw').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-point.point-nw').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-point.point-se').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-point.point-ne').style.transition = 'transform .5s'
-
-      // // document.querySelector('.cropper-dashed.dashed-h').style.transition = 'transform .5s'
-      // // document.querySelector('.cropper-dashed.dashed-v').style.transition = 'transform .5s'
-
-      // document.querySelector('.cropper-line.line-e').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-line.line-n').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-line.line-w').style.transition = 'transform .5s'
-      // document.querySelector('.cropper-line.line-s').style.transition = 'transform .5s'
-
+      cropperCropBox.style.transform = 'scale(' + canvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
     }
-    cropperCropBox.style.transition = 'transform .5s'
 
-    setTimeout(()=>{
+    clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
       this.destroyCropTouchEvent()
       this.createCropBox()
-    },800)
+    }, 600)
   }
 
-  reverse(){
+  reverse() {
     let _imageInfo = this.imageList[this.currentIndex];
     let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height),
       i, i2, t,
@@ -1024,7 +1022,7 @@ console.log("左上~~~~")
     this.context.putImageData(imgdata, 0, 0);
     document.querySelector('.cropper-view-box>img').src = this.canvas.toDataURL("image/jpeg", 1.0)
   }
-  pushOperateStack(base64Object){
+  pushOperateStack(base64Object) {
     let _imageInfo = this.imageList[this.currentIndex];
     //如果不是最后一个，那么从当先数组下标开始。删除后面的值
     if (_imageInfo.operateStackIndex === -1) {
@@ -1062,14 +1060,14 @@ console.log("左上~~~~")
     return canvas.toDataURL("image/jpeg", 1.0)
   }
 
-  returnImageList(){
-    return this.imageList.reduce((acc,cur)=>{
-      if(cur.operateStackIndex !== -1){
+  returnImageList() {
+    return this.imageList.reduce((acc, cur) => {
+      if (cur.operateStackIndex !== -1) {
         acc.push(cur.operateStack[cur.operateStackIndex])
       } else {
         acc.push(cur.origin)
       }
       return acc
-    },[])
+    }, [])
   }
 }

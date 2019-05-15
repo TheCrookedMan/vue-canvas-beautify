@@ -232,6 +232,10 @@ export default {
             this.operationImage.preOperateStack()
         },
         beginDoodle(){
+            this.currentDoodleTool = 'pencil'
+            this.currentPencilColor = '#ffffff'
+            this.currentDoodleSize = 'L'
+            
             this.$refs.mainControlPanel.style.display = 'none'
             this.$refs.header.style.display = 'none'
             this.$refs.doodleControlPanel.style.display = 'block'
