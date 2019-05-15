@@ -219,12 +219,7 @@ export default class operationImage {
       this.container.appendChild(dragBox)
     }
 
-    let cropperCropBoxInfo = null
-    if (!!document.querySelector('.cropper-wrap-box')) {
-      cropperCropBoxInfo = document.querySelector('.cropper-crop-box').getBoundingClientRect()
 
-      document.querySelector('.cropper-wrap-box').remove()
-    }
 
     let cropBoxTemplate = '<div class="cropper-crop-box"><span class="cropper-view-box"><img></span><span class="cropper-dashed dashed-h"></span><span class="cropper-dashed dashed-v"></span><span class="cropper-face cropper-move"></span><span class="cropper-line line-e"></span><span class="cropper-line line-n"></span><span class="cropper-line line-w"></span><span class="cropper-line line-s"></span><span class="cropper-point point-ne"></span><span class="cropper-point point-nw"></span><span class="cropper-point point-sw"></span><span class="cropper-point point-se"></span></div>'
     let _div = document.createElement('div')
@@ -236,17 +231,12 @@ export default class operationImage {
     _bgImg.src = this.rotateCanvas()
     // _bgImg.src = this.canvas.toDataURL("image/jpeg", 1.0)
 
-    if (!!cropperCropBoxInfo) {
-      _bgImg.style.width = cropperCropBoxInfo.width + 'px'
-      _bgImg.style.height = cropperCropBoxInfo.height + 'px'
-    } else {
       _bgImg.style.width = document.getElementById('canvasContainerDiv').getBoundingClientRect().width + 'px'
       _bgImg.style.height = document.getElementById('canvasContainerDiv').getBoundingClientRect().height + 'px'
-    }
 
-    this.initCropBoxSize(cropperCropBoxInfo)
+        this.initCropBoxSize()
   }
-  initCropBoxSize(cropperCropBoxInfo) {
+    initCropBoxSize() {
     let cropperCropBox = document.querySelector('.cropper-crop-box'),
       canvas = document.querySelector('#drawCanvas');
 
@@ -261,12 +251,6 @@ export default class operationImage {
       height: canvas.getBoundingClientRect().height
     }
     //计算裁切框大小
-    if (!!cropperCropBoxInfo) {
-      cropperCropBox.style.width = cropperCropBoxInfo.width + 'px'
-      cropperCropBox.style.height = cropperCropBoxInfo.height + 'px'
-      cropperCropBox.style.top = cropperCropBoxInfo.top + 'px'
-      cropperCropBox.style.left = cropperCropBoxInfo.left + 'px'
-    } else {
       this.cropperCropBoxTranslate3d = {
         X: 0,
         Y: 0
@@ -308,7 +292,6 @@ export default class operationImage {
           }
         }
       }
-    }
 
     this.imageList[this.currentIndex] = _imageInfo
 
@@ -327,23 +310,36 @@ export default class operationImage {
 
     this.theLeftTopTouchMove = function (e) {
 
-      let pageX = e.touches[0].pageX,
-        pageY = e.touches[0].pageY;
+            let pageX = parseFloat(e.touches[0].pageX),
+                pageY = parseFloat(e.touches[0].pageY);
 
-      let mouseX = pageX - parseFloat(cropperCropBox.getBoundingClientRect().left);
-      let mouseY = pageY - parseFloat(cropperCropBox.getBoundingClientRect().top);
-      let minAllowMoveX = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left);
-      let minAllowY = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top);
-      console.log("左上~~~~")
+            let cropperCropBoxBorderLine = cropperCropBox.getBoundingClientRect(),
+                canvasContainerBorderlineValue = document.querySelector('#canvasContainerDiv').getBoundingClientRect()
+
+            let mouseX = pageX - cropperCropBoxBorderLine.left;
+            let mouseY = pageY - cropperCropBoxBorderLine.top;
+            // console.log("mouseX:::", mouseX)
       //自由比例
       if (self.cropModel === 'freedom') {
-        if (parseFloat(cropperCropBox.style.width) - mouseX >= self.cropMinW && self.cropperCropBoxTranslate3d.X + mouseX >= minAllowMoveX) {
-          cropperCropBox.style.width = parseFloat(cropperCropBox.style.width) - mouseX + 'px'
-          self.cropperCropBoxTranslate3d.X = self.cropperCropBoxTranslate3d.X + mouseX
+                if (pageX < canvasContainerBorderlineValue.left) {
+                    console.log("1")
+                    cropperCropBox.style.left = canvasContainerBorderlineValue.left / _imageInfo.canvasScaleProportion + 'px'
+                } else if (cropperCropBoxBorderLine.width > canvasContainerBorderlineValue.width) {
+                    console.log("2")
+                    cropperCropBox.style.width = canvasContainerBorderlineValue.width / _imageInfo.canvasScaleProportion + 'px'
+                } else if (pageY < canvasContainerBorderlineValue.top) {
+                    console.log("3")
+                    cropperCropBox.style.top = canvasContainerBorderlineValue.top / _imageInfo.canvasScaleProportion + 'px'
+                } else if (cropperCropBoxBorderLine.height > canvasContainerBorderlineValue.height) {
+                    console.log("4")
+                    cropperCropBox.style.height = canvasContainerBorderlineValue.height / _imageInfo.canvasScaleProportion + 'px'
         }
-        if (parseFloat(cropperCropBox.style.height) - mouseY >= self.cropMinH && self.cropperCropBoxTranslate3d.Y + mouseY >= minAllowY) {
-          cropperCropBox.style.height = parseFloat(cropperCropBox.style.height) - mouseY + 'px'
-          self.cropperCropBoxTranslate3d.Y = self.cropperCropBoxTranslate3d.Y + mouseY
+                if (pageX >= canvasContainerBorderlineValue.left && cropperCropBoxBorderLine.top >= canvasContainerBorderlineValue.top && cropperCropBoxBorderLine.width <= canvasContainerBorderlineValue.width && cropperCropBoxBorderLine.height <= canvasContainerBorderlineValue.height && cropperCropBoxBorderLine.right <= canvasContainerBorderlineValue.right && cropperCropBoxBorderLine.bottom <= canvasContainerBorderlineValue.bottom) {
+                    console.log("5")
+                    cropperCropBox.style.width = (cropperCropBoxBorderLine.width - mouseX) / _imageInfo.canvasScaleProportion + 'px'
+                    cropperCropBox.style.left = pageX / _imageInfo.canvasScaleProportion + 'px'
+                    cropperCropBox.style.height = (cropperCropBoxBorderLine.height - mouseY) / _imageInfo.canvasScaleProportion + 'px'
+                    cropperCropBox.style.top = pageY / _imageInfo.canvasScaleProportion + 'px'
         }
       } else {
         let scale = self.cropModel.split(":")
@@ -361,7 +357,7 @@ export default class operationImage {
           self.cropperCropBoxTranslate3d.Y = self.cropperCropBoxTranslate3d.Y + _mouseY
         }
       }
-      cropperCropBox.style.transform = 'translate3d(' + self.cropperCropBoxTranslate3d.X + 'px,' + self.cropperCropBoxTranslate3d.Y + 'px,0px) '
+            // cropperCropBox.style.transform = 'translate3d(' + self.cropperCropBoxTranslate3d.X + 'px,' + self.cropperCropBoxTranslate3d.Y + 'px,0px) '
 
       self.calcViewBoxImgXY()
       e.preventDefault()
@@ -541,6 +537,7 @@ export default class operationImage {
 
     let _imageInfo = this.imageList[this.currentIndex];
 
+        if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 0) {
     theLeftTop.addEventListener('touchmove', this.theLeftTopTouchMove)
     theRightTop.addEventListener('touchmove', this.theRightTopTouchMove)
     theLeftBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
@@ -551,22 +548,22 @@ export default class operationImage {
     //   theRightTop.addEventListener('touchmove', this.theRightTopTouchMove)
     //   theLeftBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
     //   theRightBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
-    //   theRightTop.addEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theRightBottom.addEventListener('touchmove', this.theRightTopTouchMove)
-    //   theLeftTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theLeftBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
-    //   theRightBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theLeftBottom.addEventListener('touchmove', this.theRightTopTouchMove)
-    //   theRightTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theLeftTop.addEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
-    //   theLeftBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theLeftTop.addEventListener('touchmove', this.theRightTopTouchMove)
-    //   theRightBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theRightTop.addEventListener('touchmove', this.theRightBottomTouchMove)
-    // }
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
+            theRightTop.addEventListener('touchmove', this.theLeftTopTouchMove)
+            theRightBottom.addEventListener('touchmove', this.theRightTopTouchMove)
+            theLeftTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
+            theLeftBottom.addEventListener('touchmove', this.theRightBottomTouchMove)
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
+            theRightBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
+            theLeftBottom.addEventListener('touchmove', this.theRightTopTouchMove)
+            theRightTop.addEventListener('touchmove', this.theLeftBottomTouchMove)
+            theLeftTop.addEventListener('touchmove', this.theRightBottomTouchMove)
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
+            theLeftBottom.addEventListener('touchmove', this.theLeftTopTouchMove)
+            theLeftTop.addEventListener('touchmove', this.theRightTopTouchMove)
+            theRightBottom.addEventListener('touchmove', this.theLeftBottomTouchMove)
+            theRightTop.addEventListener('touchmove', this.theRightBottomTouchMove)
+        }
   }
 
   destroyCropFourHornEvent() {
@@ -582,6 +579,7 @@ export default class operationImage {
     //删除绑定的拖动事件
 
 
+        if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 0) {
     theLeftTop.removeEventListener('touchmove', this.theLeftTopTouchMove)
     theRightTop.removeEventListener('touchmove', this.theRightTopTouchMove)
     theLeftBottom.removeEventListener('touchmove', this.theLeftBottomTouchMove)
@@ -593,22 +591,22 @@ export default class operationImage {
     //   theRightTop.removeEventListener('touchmove', this.theRightTopTouchMove)
     //   theLeftBottom.removeEventListener('touchmove', this.theLeftBottomTouchMove)
     //   theRightBottom.removeEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
-    //   theRightTop.removeEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theRightBottom.removeEventListener('touchmove', this.theRightTopTouchMove)
-    //   theLeftTop.removeEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theLeftBottom.removeEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
-    //   theRightBottom.removeEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theLeftBottom.removeEventListener('touchmove', this.theRightTopTouchMove)
-    //   theRightTop.removeEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theLeftTop.removeEventListener('touchmove', this.theRightBottomTouchMove)
-    // } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
-    //   theLeftBottom.removeEventListener('touchmove', this.theLeftTopTouchMove)
-    //   theLeftTop.removeEventListener('touchmove', this.theRightTopTouchMove)
-    //   theRightBottom.removeEventListener('touchmove', this.theLeftBottomTouchMove)
-    //   theRightTop.removeEventListener('touchmove', this.theRightBottomTouchMove)
-    // }
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 1) {
+            theRightTop.removeEventListener('touchmove', this.theLeftTopTouchMove)
+            theRightBottom.removeEventListener('touchmove', this.theRightTopTouchMove)
+            theLeftTop.removeEventListener('touchmove', this.theLeftBottomTouchMove)
+            theLeftBottom.removeEventListener('touchmove', this.theRightBottomTouchMove)
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 2) {
+            theRightBottom.removeEventListener('touchmove', this.theLeftTopTouchMove)
+            theLeftBottom.removeEventListener('touchmove', this.theRightTopTouchMove)
+            theRightTop.removeEventListener('touchmove', this.theLeftBottomTouchMove)
+            theLeftTop.removeEventListener('touchmove', this.theRightBottomTouchMove)
+        } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 4) === 3) {
+            theLeftBottom.removeEventListener('touchmove', this.theLeftTopTouchMove)
+            theLeftTop.removeEventListener('touchmove', this.theRightTopTouchMove)
+            theRightBottom.removeEventListener('touchmove', this.theLeftBottomTouchMove)
+            theRightTop.removeEventListener('touchmove', this.theRightBottomTouchMove)
+        }
   }
 
   destroyCropTouchEvent() {
@@ -624,26 +622,17 @@ export default class operationImage {
     let viewBoxImg = document.querySelector('.cropper-view-box>img'),
       cropperCropBox = document.querySelector('.cropper-crop-box')
     let _imageInfo = this.imageList[this.currentIndex]
+        let cropperCropBoxBorderLine = cropperCropBox.getBoundingClientRect()
 
     let X = 0,
       Y = 0;
 
-    console.log("cropperCropBox.style.width::::", cropperCropBox.style.width)
-    console.log("cropperCropBox.style.height::::", cropperCropBox.style.height)
-    console.log("cropperCropBox.style.left::::", cropperCropBox.style.left)
-    console.log("cropperCropBox.style.top::::", cropperCropBox.style.top)
-    console.log("cropperCropBox.style.bottom::::", cropperCropBox.style.bottom)
-    console.log("cropperCropBox.style.right::::", cropperCropBox.style.right)
 
-    console.log("this.cropperCropBoxTranslate3d:::::", this.cropperCropBoxTranslate3d)
 
-    console.log("_imageInfo.borderlineValue::::", _imageInfo.borderlineValue)
 
-    X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBox.style.left) - this.cropperCropBoxTranslate3d.X
-    Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBox.style.top) - this.cropperCropBoxTranslate3d.Y
+        X = _imageInfo.borderlineValue.left - parseFloat(cropperCropBoxBorderLine.left) - this.cropperCropBoxTranslate3d.X
+        Y = _imageInfo.borderlineValue.top - parseFloat(cropperCropBoxBorderLine.top) - this.cropperCropBoxTranslate3d.Y
 
-    console.log("X::::", X)
-    console.log("Y::::", Y)
 
     viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
     // viewBoxImg.style.transform = 'translate(' + X + 'px, ' + Y + 'px)'
@@ -731,7 +720,8 @@ export default class operationImage {
     } else {
       this.currentIndex = this.maxImageIndex
       callback(this.currentIndex)
-    }!!this.onImageChange && this.onImageChange()
+        }
+        !!this.onImageChange && this.onImageChange()
   }
 
   preImage(callback) {
@@ -947,7 +937,7 @@ export default class operationImage {
   //图片旋转
   rotate() {
     //解绑之前的四个角绑定的事件
-    // this.destroyCropFourHornEvent()
+        this.destroyCropFourHornEvent()
     //重新计算旋转角度
     let _imageInfo = this.imageList[this.currentIndex]
     _imageInfo.imageRotateDeg -= 90
@@ -959,8 +949,7 @@ export default class operationImage {
     canvasContainerDivPos.width = canvasContainerDivPos.width - 10
     canvasContainerDivPos.height = canvasContainerDivPos.height - 10
     let containerDivPos = this.container.getBoundingClientRect()
-    let canvasScaleProportion = 0,
-      preCanvasScaleProportion = _imageInfo.canvasScaleProportion
+        let canvasScaleProportion = 0;
 
     if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 1) {
       let proportionWidth = canvasContainerDivPos.width > containerDivPos.width ? canvasContainerDivPos.width : containerDivPos.width,
@@ -976,7 +965,6 @@ export default class operationImage {
     }
     _imageInfo.canvasScaleProportion = canvasScaleProportion
 
-    console.log("canvasScaleProportion::::", canvasScaleProportion)
 
     canvasContainerDiv.style.transform = 'scale(' + canvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
     canvasContainerDiv.style.transition = 'transform 0.2s'
@@ -987,17 +975,10 @@ export default class operationImage {
     let cropperCropBox = document.querySelector('.cropper-wrap-box');
 
     //如果裁切框scale不为1表示 放大缩小过，所以 再次 变换的时候 就需要还原
-    if (preCanvasScaleProportion !== 1) {
-      cropperCropBox.style.transform = 'scale(' + 1 / preCanvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
-    } else {
       cropperCropBox.style.transform = 'scale(' + canvasScaleProportion + ') rotateZ(' + _imageInfo.imageRotateDeg + 'deg)'
-    }
+        cropperCropBox.style.transition = 'transform 0.2s'
 
-    clearTimeout(this.timer)
-    this.timer = setTimeout(() => {
-      this.destroyCropTouchEvent()
-      this.createCropBox()
-    }, 600)
+        this.initCropTouchEvent()
   }
 
   reverse() {
