@@ -212,6 +212,7 @@ export default {
             this.$refs.header.style.display = 'block'
             this.$refs.cropControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
+            this.currentCropType = 'freedom'
         },
         sureCropImage(){
             this.operationImage.sureCropImage()
@@ -220,6 +221,7 @@ export default {
             this.$refs.header.style.display = 'block'
             this.$refs.cropControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
+            this.currentCropType = 'freedom'
         },
         chooseCropViewBox(cropModel){
             this.currentCropType = cropModel
