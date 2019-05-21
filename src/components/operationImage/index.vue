@@ -472,7 +472,6 @@ export default {
                     .doodle-operation-item{
                         height: 40px;
                         line-height: 40px;
-                        border:1px solid #000;
                     }
                     .pencil-text{
                         font-size: 12px;
@@ -503,8 +502,10 @@ export default {
                             display: flex;
                             align-items: center;
                             text-align: center;
+                            border:1px solid #000;
                             .circle{
                                 background-color: #000;
+                                border:1px solid red;
                                 display: inline-block;
                                 &.checked{
                                     background-color: #da1470;
