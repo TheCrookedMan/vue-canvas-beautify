@@ -514,8 +514,8 @@ export default {
                             }
                             &:nth-child(2){
                                 .circle{
-                                    width: 11px;
-                                    height: 11px;
+                                    width: 10px;
+                                    height: 10px;
                                     border-radius: 50%;
                                     // transform: scale(.9);
                                 }
