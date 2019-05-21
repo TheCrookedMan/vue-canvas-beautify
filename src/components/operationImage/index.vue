@@ -213,7 +213,7 @@ export default {
         cancelCropImage(){
             this.operationImage.cancelCropImage()
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.cropControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.currentCropType = 'freedom'
@@ -222,7 +222,7 @@ export default {
             this.operationImage.sureCropImage()
             console.log("sureCropImage:::::")
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.cropControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.currentCropType = 'freedom'
@@ -250,14 +250,14 @@ export default {
         },
         sureDoodleImage(){
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.doodleControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.operationImage.sureDoodleImage()
         },
         cancelDoodleImage(){
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.doodleControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.operationImage.cancelDoodleImage()
@@ -285,14 +285,14 @@ export default {
         },
         cancelColorHandle(){
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.colorControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.operationImage.cancelColorHandle()
         },
         sureColorHandle(){
             this.$refs.mainControlPanel.style.display = 'flex'
-            this.$refs.header.style.display = 'block'
+            this.$refs.header.style.display = 'flex'
             this.$refs.colorControlPanel.style.display = 'none'
             this.showPreAndNextBtn = true
             this.operationImage.sureColorHandle()
