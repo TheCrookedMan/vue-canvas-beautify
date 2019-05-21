@@ -51,39 +51,34 @@ export default class operationImage {
     this.isRotate = false
   }
   createCanvas() {
-    this.canvas = document.createElement('Canvas')
-    this.canvas.id = 'drawCanvas'
+    this.imageCanvas = document.createElement('img')
+    this.imageCanvas.id = 'drawCanvas'
     this.canvasContainerDiv = document.createElement('div')
     this.canvasContainerDiv.id = 'canvasContainerDiv'
-    this.canvasContainerDiv.appendChild(this.canvas)
+    this.canvasContainerDiv.appendChild(this.imageCanvas)
+    this.container.appendChild(this.canvasContainerDiv)
   }
   loadImage() {
     let img = new Image(),
-      self = this,
-      __url;
+      self = this;
     img.crossOrigin = "anonymous";
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         self.autoRotateImage(this).then((base64URL) => {
-          let blobImg = new Image()
-          blobImg.onload = function () {
+          self.imageCanvas.onload = function(){
             self.imageList[self.currentIndex]['image'] = this
-            self.canvas.height = this.height
-            self.canvas.width = this.width
-            self.container.appendChild(self.canvasContainerDiv)
-            self.context = self.canvas.getContext("2d")
-            self.context.drawImage(this, 0, 0)
+            self.imageCanvas.height = this.height
+            self.imageCanvas.width = this.width
+            
             resolve()
           }
-          blobImg.src = base64URL
+          self.imageCanvas.src = base64URL
 
         }, (result) => {
           self.imageList[self.currentIndex]['image'] = result
-          self.canvas.height = result.height
-          self.canvas.width = result.width
-          self.container.appendChild(self.canvasContainerDiv)
-          self.context = self.canvas.getContext("2d")
-          self.context.drawImage(result, 0, 0)
+          self.imageCanvas.height = result.height
+          self.imageCanvas.width = result.width
+          self.imageCanvas.src = result
           resolve()
         })
       }
@@ -99,7 +94,6 @@ export default class operationImage {
           img.src = imageInfo.origin
         }
       } else {
-        // __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
         let oReader = new FileReader()
         oReader.onload = function (e) {
           img.src = e.target.result
@@ -148,7 +142,7 @@ export default class operationImage {
             resolve(canvas.toDataURL(self.imageType, self.imageDefinition))
             break;
           default:
-            reject(imgFile)
+            reject(imgFile.src)
             break;
         }
       })
@@ -222,7 +216,6 @@ export default class operationImage {
     let _bgImg = document.querySelector('.cropper-view-box>img')
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     _bgImg.src = this.rotateCanvas()
-    // _bgImg.src = this.canvas.toDataURL("image/jpeg", 1.0)
 
     _bgImg.style.width = document.getElementById('canvasContainerDiv').getBoundingClientRect().width + 'px'
     _bgImg.style.height = document.getElementById('canvasContainerDiv').getBoundingClientRect().height + 'px'
@@ -1001,13 +994,20 @@ export default class operationImage {
     this.drawCanvas = document.createElement('Canvas')
     this.drawCanvas.width = _imageInfo.image.width
     this.drawCanvas.height = _imageInfo.image.height
+    this.drawCanvas.style.position = 'absolute'
+    this.drawCanvas.style.left = this.imageCanvas.getBoundingClientRect().left + 'px'
+    this.drawCanvas.style.top = this.imageCanvas.getBoundingClientRect().top + 'px'
+    this.drawCanvas.style.transform = this.imageCanvas.style.transform
+    this.drawCanvas.style.transformOrigin = this.imageCanvas.style.transformOrigin
+    
     this.drawContext = this.drawCanvas.getContext('2d')
+    this.canvasContainerDiv.appendChild(this.drawCanvas)
     this.posList = []
     this.doodleTouchStart = function (e) {
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
-      var mouseX = pageX - self.canvas.getBoundingClientRect().left;
-      var mouseY = pageY - self.canvas.getBoundingClientRect().top;
+      var mouseX = pageX - self.drawCanvas.getBoundingClientRect().left;
+      var mouseY = pageY - self.drawCanvas.getBoundingClientRect().top;
       mouseX = mouseX / _imageInfo.proportion;
       mouseY = mouseY / _imageInfo.proportion;
       self.posList = []
@@ -1019,14 +1019,13 @@ export default class operationImage {
       e.preventDefault()
       e.stopPropagation()
     }
-    // this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
-    this.canvas.addEventListener('touchstart', this.doodleTouchStart, false)
+    this.drawCanvas.addEventListener('touchstart', this.doodleTouchStart, false)
 
     this.doodleTouchMove = function (e) {
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
-      var mouseX = pageX - self.canvas.getBoundingClientRect().left;
-      var mouseY = pageY - self.canvas.getBoundingClientRect().top;
+      var mouseX = pageX - self.drawCanvas.getBoundingClientRect().left;
+      var mouseY = pageY - self.drawCanvas.getBoundingClientRect().top;
       mouseX = mouseX / _imageInfo.proportion;
       mouseY = mouseY / _imageInfo.proportion;
 
@@ -1041,12 +1040,11 @@ export default class operationImage {
       e.preventDefault()
       e.stopPropagation()
     }
-    // this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
-    this.canvas.addEventListener('touchmove', this.doodleTouchMove, false)
+    this.drawCanvas.addEventListener('touchmove', this.doodleTouchMove, false)
   }
   drawLine() {
     let _imageInfo = this.imageList[this.currentIndex];
-    this.clearCanvas()
+    // this.clearCanvas()
     this.drawContext.beginPath()
     this.drawContext.moveTo(this.posList[0]['mouseX'], this.posList[0]['mouseY'])
     if (this.posList.length > 1) {
@@ -1077,14 +1075,6 @@ export default class operationImage {
       this.drawContext.lineWidth = 100;
     }
     this.drawContext.stroke();
-
-    // Draw the outline image
-    this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-    this.context.drawImage(this.drawCanvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-  }
-  clearCanvas() {
-    let _imageInfo = this.imageList[this.currentIndex];
-    this.context.clearRect(0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
   setDoodleTool(val) {
     this.curTool = val
@@ -1096,23 +1086,22 @@ export default class operationImage {
     this.curSize = val
   }
   cancelDoodleImage() {
-    this.clearCanvas()
     let _imageInfo = this.imageList[this.currentIndex];
-    this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-    this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
-    this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
+    this.drawCanvas.remove()
+    // this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    this.imageCanvas.removeEventListener('touchstart', this.doodleTouchStart)
+    this.imageCanvas.removeEventListener('touchmove', this.doodleTouchMove)
   }
   sureDoodleImage() {
     let self = this
-    this.canvas.toBlob(function (result) {
+    this.drawCanvas.toBlob(function (result) {
       let doodleImage = result
 
-      self.clearCanvas()
-      self.canvas.removeEventListener('touchstart', self.doodleTouchStart)
-      self.canvas.removeEventListener('touchmove', self.doodleTouchMove)
+      self.imageCanvas.removeEventListener('touchstart', self.doodleTouchStart)
+      self.imageCanvas.removeEventListener('touchmove', self.doodleTouchMove)
 
       self.pushOperateStack(doodleImage)
-
+      self.drawCanvas.remove()
       self.loadImage().then(() => {
         self.drawCanvasPanel()
       })
@@ -1126,7 +1115,13 @@ export default class operationImage {
   }
   operationColorHD() {
     let _imageInfo = this.imageList[this.currentIndex];
-    let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    let __canvas = document.createElement('canvas')
+    __canvas.width = _imageInfo.image.width
+    __canvas.height = _imageInfo.image.height
+    let __context = __canvas.getContext("2d")
+    __context.drawImage(_imageInfo.image, 0, 0)
+
+    let imgdata = __context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height);
     var data = imgdata.data;
     /*灰度处理：求r，g，b的均值，并赋回给r，g，b*/
     for (var i = 0, n = data.length; i < n; i += 4) {
@@ -1135,26 +1130,19 @@ export default class operationImage {
       data[i + 1] = average;
       data[i + 2] = average;
     }
-    this.context.putImageData(imgdata, 0, 0);
+    __context.putImageData(imgdata, 0, 0);
+    this.imageCanvas.src = __canvas.toDataURL(this.imageType, this.imageDefinition)
   }
   cancelColorHandle() {
-    this.clearCanvas()
     let _imageInfo = this.imageList[this.currentIndex];
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
   sureColorHandle() {
-    // let colorHandleImage = this.canvas.toDataURL("image/jpeg", 1.0)
-    let self = this
-    this.canvas.toBlob(function (result) {
-      let colorHandleImage = result
-      self.clearCanvas()
+    this.pushOperateStack(this.imageCanvas.src)
 
-      self.pushOperateStack(colorHandleImage)
-
-      self.loadImage().then(() => {
-        self.drawCanvasPanel()
-      })
-    }, self.imageType, self.imageDefinition)
+    this.loadImage().then(() => {
+      this.drawCanvasPanel()
+    })
   }
   //图片旋转
   rotate() {
@@ -1198,7 +1186,12 @@ export default class operationImage {
 
   reverse() {
     let _imageInfo = this.imageList[this.currentIndex];
-    let imgdata = this.context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height),
+    let __canvas = document.createElement('canvas')
+    let __context = __canvas.getContext("2d")
+    __canvas.width = _imageInfo.image.width
+    __canvas.height = _imageInfo.image.height
+    __context.drawImage(_imageInfo.image, 0, 0)
+    let imgdata = __context.getImageData(0, 0, _imageInfo.image.width, _imageInfo.image.height),
       i, i2, t,
       h = imgdata.height,
       w = imgdata.width,
@@ -1215,8 +1208,8 @@ export default class operationImage {
         }
       }
     }
-    this.context.putImageData(imgdata, 0, 0);
-    document.querySelector('.cropper-view-box>img').src = this.canvas.toDataURL("image/jpeg", this.imageDefinition)
+    __context.putImageData(imgdata, 0, 0);
+    document.querySelector('.cropper-view-box>img').src = __canvas.toDataURL("image/jpeg", this.imageDefinition)
   }
   pushOperateStack(base64Object) {
     let _imageInfo = this.imageList[this.currentIndex];
@@ -1244,13 +1237,13 @@ export default class operationImage {
       canvas.height = _imageInfo.image.width
       context.translate(canvas.width / 2, canvas.height / 2)
       context.rotate(_imageInfo.imageRotateDeg * (Math.PI / 180));
-      context.drawImage(this.canvas, -(canvas.height / 2), -(canvas.width / 2))
+      context.drawImage(_imageInfo.image, -(canvas.height / 2), -(canvas.width / 2))
     } else {
       canvas.width = _imageInfo.image.width
       canvas.height = _imageInfo.image.height
       context.translate(canvas.width / 2, canvas.height / 2)
       context.rotate(_imageInfo.imageRotateDeg * (Math.PI / 180));
-      context.drawImage(this.canvas, -(canvas.width / 2), -(canvas.height / 2))
+      context.drawImage(_imageInfo.image, -(canvas.width / 2), -(canvas.height / 2))
     }
     return canvas.toDataURL(this.imageType, this.imageDefinition)
   }
