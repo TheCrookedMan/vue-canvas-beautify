@@ -508,7 +508,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 12px;
+                                    border-radius: 30px;
                                     transform: scale(.7);
                                 }
                             }
