@@ -2,10 +2,14 @@
     <div class="container">
         <div class="beautify-header" ref="header">
             <span class="btn-cancel" @click.stop.prevent="cancel">返回</span>
-            <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click.stop.prevent="preOperateStack"></i>
-            <i class="iconfont icon-advance icon-display" v-else></i>
-            <i class="iconfont icon-retreat" v-if="operateStack.length > 0 && operateStackIndex < operateStack.length - 1" @click.stop.prevent="nextOperateStack"></i>
-            <i class="iconfont icon-retreat icon-display" v-else></i>
+            <span class="btn-advance">
+                <i class="iconfont icon-advance" v-if="operateStack.length > 0 && operateStackIndex >= 0" @click.stop.prevent="preOperateStack"></i>
+                <i class="iconfont icon-advance icon-display" v-else></i>
+            </span>
+            <span class="btn-retreat">
+                <i class="iconfont icon-retreat" v-if="operateStack.length > 0 && operateStackIndex < operateStack.length - 1" @click.stop.prevent="nextOperateStack"></i>
+                <i class="iconfont icon-retreat icon-display" v-else></i>
+            </span>
             <span class="btn-save" @click.stop.prevent="submit">保存</span>
         </div>
         <div class="beautify-body" ref="body">
@@ -330,48 +334,37 @@ export default {
         height: 40px;
         width: 100%;
         position: relative;
-        // .icon-back {
-        //     position: absolute;
-        //     height: 20px;
-        //     top: 10px;
-        //     left: 10px;
-        //     font-size: 24px;
-        // }
-
-        .icon-advance {
-            position: absolute;
-            height: 20px;
-            top: 10px;
-            font-size: 24px;
-            margin-left: -15px;
+        display: flex;
+        span{
+            flex: 1;
+            line-height: 40px;
         }
-
-        .icon-retreat{
-            position: absolute;
-            height: 20px;
-            top: 10px;
-            font-size: 24px;
-            margin-left: 15px;
+        .btn-advance{
+            text-align: right;
+            .icon-advance {
+                font-size: 24px;
+                margin-right: 5px;
+            }
         }
-
+        .btn-retreat{
+            text-align: left;
+            .icon-retreat{
+                font-size: 24px;
+                margin-left: 5px;
+            }
+        }
         .btn-cancel{
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            height: 20px;
-            line-height: 24px;
             font-size: 14px;
             font-weight: 600;
+            text-align: left;
+            margin-left: 10px;
         }
 
         .btn-save {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            height: 20px;
-            line-height: 24px;
             font-size: 14px;
             font-weight: 600;
+            text-align: right;
+            margin-right: 10px;
         }
 
         .icon-display{
