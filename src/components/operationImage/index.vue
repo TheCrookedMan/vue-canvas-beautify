@@ -522,26 +522,26 @@ export default {
                             }
                             &:nth-child(3){
                                 .circle{
-                                    width: 12px;
-                                    height: 12px;
+                                    width: 14px;
+                                    height: 14px;
                                     border-radius: 40px;
-                                    transform: scale(1.1);
+                                    // transform: scale(1.1);
                                 }
                             }
                             &:nth-child(4){
                                 .circle{
-                                    width: 12px;
-                                    height: 12px;
+                                    width: 17px;
+                                    height: 17px;
                                     border-radius: 40px;
-                                    transform: scale(1.3);
+                                    // transform: scale(1.3);
                                 }
                             }
                             &:nth-child(5){
                                 .circle{
-                                    width: 12px;
-                                    height: 12px;
+                                    width: 20px;
+                                    height: 20px;
                                     border-radius: 40px;
-                                    transform: scale(1.5);
+                                    // transform: scale(1.5);
                                 }
                             }
                         }
