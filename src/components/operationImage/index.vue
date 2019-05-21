@@ -495,7 +495,7 @@ export default {
                             display: flex;
                             align-items: center;
                             text-align: center;
-                            // border:1px solid #000;
+                            border:1px solid #000;
                             .circle{
                                 background-color: #000;
                                 // border:1px solid red;
