@@ -65,21 +65,28 @@ export default class operationImage {
     return new Promise(function (resolve, reject) {
       img.onload = function () {
         self.autoRotateImage(this).then((base64URL) => {
-          self.imageCanvas.onload = function(){
+          let __img = new Image()
+          
+          __img.onload = function () {
             self.imageList[self.currentIndex]['image'] = this
             self.imageCanvas.height = this.height
             self.imageCanvas.width = this.width
+            self.imageCanvas.src = this.src
+            resolve()
+          }
+          __img.src = base64URL
+
+        }, (result) => {
+          let __img = new Image()
+          __img.onload = function(){
+            self.imageList[self.currentIndex]['image'] = this
+            self.imageCanvas.height = this.height
+            self.imageCanvas.width = this.width
+            self.imageCanvas.src = this.src
             
             resolve()
           }
-          self.imageCanvas.src = base64URL
-
-        }, (result) => {
-          self.imageList[self.currentIndex]['image'] = result
-          self.imageCanvas.height = result.height
-          self.imageCanvas.width = result.width
-          self.imageCanvas.src = result
-          resolve()
+          __img.src = result.src
         })
       }
       img.onerror = function (error) {
@@ -142,7 +149,7 @@ export default class operationImage {
             resolve(canvas.toDataURL(self.imageType, self.imageDefinition))
             break;
           default:
-            reject(imgFile.src)
+            reject(imgFile)
             break;
         }
       })
@@ -1086,15 +1093,22 @@ export default class operationImage {
     this.curSize = val
   }
   cancelDoodleImage() {
-    let _imageInfo = this.imageList[this.currentIndex];
     this.drawCanvas.remove()
-    // this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
     this.imageCanvas.removeEventListener('touchstart', this.doodleTouchStart)
     this.imageCanvas.removeEventListener('touchmove', this.doodleTouchMove)
   }
   sureDoodleImage() {
-    let self = this
-    this.drawCanvas.toBlob(function (result) {
+    let self = this;
+    let _imageInfo = this.imageList[this.currentIndex];
+
+    let __canvas = document.createElement('canvas')
+    __canvas.width = _imageInfo.image.width
+    __canvas.height = _imageInfo.image.height
+    let __context = __canvas.getContext("2d")
+    __context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    __context.drawImage(this.drawCanvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    
+    __canvas.toBlob(function (result) {
       let doodleImage = result
 
       self.imageCanvas.removeEventListener('touchstart', self.doodleTouchStart)
@@ -1102,6 +1116,7 @@ export default class operationImage {
 
       self.pushOperateStack(doodleImage)
       self.drawCanvas.remove()
+      __canvas.remove()
       self.loadImage().then(() => {
         self.drawCanvasPanel()
       })
@@ -1131,18 +1146,23 @@ export default class operationImage {
       data[i + 2] = average;
     }
     __context.putImageData(imgdata, 0, 0);
+    this.__canvas = __canvas
     this.imageCanvas.src = __canvas.toDataURL(this.imageType, this.imageDefinition)
   }
   cancelColorHandle() {
-    let _imageInfo = this.imageList[this.currentIndex];
-    this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-  }
-  sureColorHandle() {
-    this.pushOperateStack(this.imageCanvas.src)
-
     this.loadImage().then(() => {
       this.drawCanvasPanel()
     })
+  }
+  sureColorHandle() {
+    let self = this
+    this.__canvas.toBlob(function (result) {
+      self.pushOperateStack(result)
+      self.__canvas = null
+      self.loadImage().then(() => {
+        self.drawCanvasPanel()
+      })
+    },self.imageType,self.imageDefinition)
   }
   //图片旋转
   rotate() {
