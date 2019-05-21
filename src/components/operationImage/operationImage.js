@@ -25,7 +25,7 @@ export default class operationImage {
 
     this.timer;
     this.imageType = 'image/png'
-    this.imageDefinition = 1.0
+    this.imageDefinition = 0.7
 
     imageList.forEach((I, i) => {
       if (!I.origin && '[object Object]' !== Object.prototype.toString.call(I)) {
