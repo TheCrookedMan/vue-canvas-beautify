@@ -508,7 +508,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 40px;
+                                    border-radius: 450%;
                                     transform: scale(.7);
                                 }
                             }
@@ -516,7 +516,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 40px;
+                                    border-radius: 50%;
                                     transform: scale(.9);
                                 }
                             }
