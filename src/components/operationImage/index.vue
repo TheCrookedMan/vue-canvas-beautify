@@ -472,6 +472,7 @@ export default {
                     .doodle-operation-item{
                         height: 40px;
                         line-height: 40px;
+                        border:1px solid #000;
                     }
                     .pencil-text{
                         font-size: 12px;
