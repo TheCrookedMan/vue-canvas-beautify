@@ -453,6 +453,7 @@ export default class operationImage {
       cropperCropBox.style.transform = 'translate3d(' + self.cropperCropBoxTranslate3d.X + 'px,' + self.cropperCropBoxTranslate3d.Y + 'px,0px) '
       self.calcViewBoxImgXY()
       e.preventDefault()
+      e.stopPropagation()
     }
 
 
@@ -544,6 +545,7 @@ export default class operationImage {
       cropperCropBox.style.transform = 'translate3d(' + self.cropperCropBoxTranslate3d.X + 'px,' + self.cropperCropBoxTranslate3d.Y + 'px,0px)'
       self.calcViewBoxImgXY()
       e.preventDefault()
+      e.stopPropagation()
     }
 
     this.theLeftBottomTouchMove = function (e) {
@@ -629,6 +631,7 @@ export default class operationImage {
 
       self.calcViewBoxImgXY()
       e.preventDefault()
+      e.stopPropagation()
     }
 
     this.theRightBottomTouchMove = function (e) {
@@ -708,6 +711,7 @@ export default class operationImage {
       cropperCropBox.style.transform = 'translate3d(' + self.cropperCropBoxTranslate3d.X + 'px,' + self.cropperCropBoxTranslate3d.Y + 'px,0px)'
       self.calcViewBoxImgXY()
       e.preventDefault()
+      e.stopPropagation()
     }
 
     this.bindCropFourHornEvent()
@@ -724,6 +728,7 @@ export default class operationImage {
         mouseY: mouseY
       }
       e.preventDefault()
+      e.stopPropagation()
     }
 
     theCropperMove.addEventListener('touchstart', this.theCropperMoveTouchStart)
@@ -770,6 +775,7 @@ export default class operationImage {
       cropperCropBox.style.transform = 'translate3d(' + (self.cropperCropBoxTranslate3d.X) + 'px, ' + self.cropperCropBoxTranslate3d.Y + 'px,0px)'
       self.calcViewBoxImgXY()
       e.preventDefault()
+      e.stopPropagation()
     }
     theCropperMove.addEventListener('touchmove', this.theCropperMoveTouchMove)
   }
@@ -1011,7 +1017,9 @@ export default class operationImage {
       })
       self.drawLine()
       e.preventDefault()
+      e.stopPropagation()
     }
+    // this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
     this.canvas.addEventListener('touchstart', this.doodleTouchStart, false)
 
     this.doodleTouchMove = function (e) {
@@ -1031,8 +1039,9 @@ export default class operationImage {
       }
       self.drawLine()
       e.preventDefault()
+      e.stopPropagation()
     }
-
+    // this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
     this.canvas.addEventListener('touchmove', this.doodleTouchMove, false)
   }
   drawLine() {
