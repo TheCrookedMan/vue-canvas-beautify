@@ -24,7 +24,7 @@ export default class operationImage {
     this.timeStamp = Date.now()
 
     this.timer;
-    this.imageType = 'image/jpg'
+    this.imageType = 'image/png'
     this.imageDefinition = 1.0
 
     imageList.forEach((I, i) => {
@@ -252,10 +252,15 @@ export default class operationImage {
     }
     
     if (this.cropModel === 'freedom') {
-      cropperCropBox.style.width = _imageInfo.borderlineValue.width + 'px'
-      cropperCropBox.style.height = _imageInfo.borderlineValue.height + 'px'
-      cropperCropBox.style.top = _imageInfo.borderlineValue.top + 'px'
-      cropperCropBox.style.left = _imageInfo.borderlineValue.left + 'px'
+      if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 0) {
+        cropperCropBox.style.width = _imageInfo.borderlineValue.width + 'px'
+        cropperCropBox.style.height = _imageInfo.borderlineValue.height + 'px'
+        cropperCropBox.style.top = _imageInfo.borderlineValue.top + 'px'
+        cropperCropBox.style.left = _imageInfo.borderlineValue.left + 'px'
+      } else if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 1) {
+        cropperCropBox.style.width = _imageInfo.borderlineValue.height / _imageInfo.canvasScaleProportion + 'px'
+        cropperCropBox.style.height = _imageInfo.borderlineValue.width / _imageInfo.canvasScaleProportion + 'px'
+      }
     } else {
       let scale = this.cropModel.split(":")
       
@@ -324,8 +329,8 @@ export default class operationImage {
             cropperCropBox.style.width = (calcHeight / _imageInfo.canvasScaleProportion) + 'px'
             cropperCropBox.style.height = (_imageInfo.borderlineValue.width / _imageInfo.canvasScaleProportion) + 'px'
             this.cropperCropBoxTranslate3d = {
-              X: 0,
-              Y: ((_imageInfo.borderlineValue.height - calcHeight) / _imageInfo.canvasScaleProportion) / 2
+              X: ((_imageInfo.borderlineValue.height - calcHeight) / _imageInfo.canvasScaleProportion) / 2,
+              Y: 0
             }
           } else {
             let calcWidth = _imageInfo.borderlineValue.width * (_imageInfo.borderlineValue.height/calcHeight)
@@ -337,8 +342,6 @@ export default class operationImage {
             }
           }
         }
-
-        
       }
     }
 
@@ -1092,7 +1095,6 @@ export default class operationImage {
   }
   sureDoodleImage() {
     let self = this
-    // let doodleImage = this.canvas.toDataURL("image/jpeg", 1.0)
     this.canvas.toBlob(function (result) {
       let doodleImage = result
 
@@ -1153,7 +1155,6 @@ export default class operationImage {
     let _imageInfo = this.imageList[this.currentIndex]
     _imageInfo.imageRotateDeg -= 90
 
-    this.imageList[this.currentIndex] = _imageInfo
     //旋转Canvas容器，按比例缩小
     let canvasContainerDiv = document.querySelector('#canvasContainerDiv'),
       canvasContainerDivPos = canvasContainerDiv.getBoundingClientRect()
@@ -1161,7 +1162,7 @@ export default class operationImage {
     let containerDivPos = this.container.getBoundingClientRect()
     let canvasScaleProportion = 0;
 
-    if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 1) {
+    if (Math.abs((_imageInfo.imageRotateDeg / 90) % 2) === 1 && (_imageInfo.image.width > containerDivPos.width || _imageInfo.image.height > containerDivPos.height)) {
       let proportionWidth = (containerDivPos.width - 10) / canvasContainerDivPos.height,
       proportionHeight = (containerDivPos.height - 10) / canvasContainerDivPos.width;
       canvasScaleProportion = proportionWidth < proportionHeight ? proportionWidth : proportionHeight
@@ -1242,7 +1243,7 @@ export default class operationImage {
       context.rotate(_imageInfo.imageRotateDeg * (Math.PI / 180));
       context.drawImage(this.canvas, -(canvas.width / 2), -(canvas.height / 2))
     }
-    return canvas.toDataURL("image/jpeg", this.imageDefinition)
+    return canvas.toDataURL(this.imageType, this.imageDefinition)
   }
 
   returnImageList() {
