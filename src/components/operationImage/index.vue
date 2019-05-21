@@ -514,10 +514,10 @@ export default {
                             }
                             &:nth-child(2){
                                 .circle{
-                                    width: 12px;
-                                    height: 12px;
+                                    width: 11px;
+                                    height: 11px;
                                     border-radius: 50%;
-                                    transform: scale(.9);
+                                    // transform: scale(.9);
                                 }
                             }
                             &:nth-child(3){
