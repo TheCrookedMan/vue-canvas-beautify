@@ -508,7 +508,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 50%;
+                                    border-radius: 40px;
                                     transform: scale(.7);
                                 }
                             }
@@ -516,7 +516,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 50%;
+                                    border-radius: 40px;
                                     transform: scale(.9);
                                 }
                             }
@@ -524,7 +524,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 50%;
+                                    border-radius: 40px;
                                     transform: scale(1.1);
                                 }
                             }
@@ -532,7 +532,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 50%;
+                                    border-radius: 40px;
                                     transform: scale(1.3);
                                 }
                             }
@@ -540,7 +540,7 @@ export default {
                                 .circle{
                                     width: 12px;
                                     height: 12px;
-                                    border-radius: 50%;
+                                    border-radius: 40px;
                                     transform: scale(1.5);
                                 }
                             }
