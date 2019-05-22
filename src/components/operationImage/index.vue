@@ -317,7 +317,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-img{
+#drawCanvas{
     max-width: inherit;
 }
 .container {
