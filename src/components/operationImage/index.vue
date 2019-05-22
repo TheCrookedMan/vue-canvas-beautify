@@ -317,6 +317,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+img{
+    max-width: inherit;
+}
 .container {
     position: absolute;
     left: 0;
