@@ -53,6 +53,7 @@ export default class operationImage {
   createCanvas() {
     this.imageCanvas = document.createElement('img')
     this.imageCanvas.id = 'drawCanvas'
+    this.imageCanvas.style.maxWidth = 'inherit'
     this.canvasContainerDiv = document.createElement('div')
     this.canvasContainerDiv.id = 'canvasContainerDiv'
     this.canvasContainerDiv.appendChild(this.imageCanvas)
