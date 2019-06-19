@@ -1045,6 +1045,7 @@ export default class operationImage {
     this.canvas.addEventListener('touchmove', this.doodleTouchMove, false)
   }
   drawLine() {
+    console.log("drawLine:::::")
     let _imageInfo = this.imageList[this.currentIndex];
     // this.clearCanvas()
     this.drawContext.beginPath()
