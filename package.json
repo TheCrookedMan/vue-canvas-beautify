@@ -1,6 +1,6 @@
 {
   "name": "vue-canvas-beautify",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "vue canvse beautify crop doodle ",
   "main": "./src/components/index.js",
   "private": false,
