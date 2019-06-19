@@ -2,13 +2,15 @@
 <div id="app">
     <div>
       <operation-image :image-list="imageList"></operation-image>
+      <!-- <img id="image" :src="imageList[1]"> -->
     </div>
-    <!-- <canvas id="test"></canvas> -->
 </div>
 </template>
 
 <script>
 import operationImage from './components/operationImage/index.vue'
+import Cropper from '/Users/chenyuwu/workSpace/workSpace/self-research-project/source-code/cropperjs/src/index.js';
+import 'cropperjs/dist/cropper.css'
 
 import __1 from './assets/1.png'
 import __2 from './assets/2.jpeg'
@@ -25,24 +27,26 @@ export default {
     name: 'app',
     data(){
       return {
-        // imageList: [__4,__3,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1]
-        imageList: [__test1,__test2,__test3,__test4,__test5,__test6]
+        imageList: [__4,__3,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1]
+        // imageList: [__1,__test1,__test2,__test3,__test4,__test5,__test6]
       }
     },
     components: {
       'operation-image': operationImage
     },
     mounted(){
-      // let canvas = document.getElementById('test'),context = canvas.getContext("2d");
-      // canvas.width = 1080
-      // canvas.height = 1440
-      // let img = new Image()
-      // img.onload = function(){
-      //   context.translate(canvas.width ,0)
-      //   context.rotate(90 * (Math.PI / 180));
-      //   context.drawImage(this, 0, 0, canvas.height,canvas.width)
-      // }
-      // img.src = __test3
+      // new Cropper(document.getElementById('image'),{
+      //   aspectRatio: 16 / 9,
+      //   crop(event) {
+      //     console.log(event.detail.x);
+      //     console.log(event.detail.y);
+      //     console.log(event.detail.width);
+      //     console.log(event.detail.height);
+      //     console.log(event.detail.rotate);
+      //     console.log(event.detail.scaleX);
+      //     console.log(event.detail.scaleY);
+      //   },
+      // })
     }
 }
 </script>
@@ -56,6 +60,10 @@ export default {
     color: #2c3e50;
     margin-top: 60px;
     overflow: hidden;
+}
+
+#image{
+  max-width: 100%;
 }
 
 html{
