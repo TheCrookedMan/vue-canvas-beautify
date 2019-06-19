@@ -1037,7 +1037,7 @@ export default class operationImage {
       if (self.posList.length === 3) {
         self.posList.shift()
       }
-      self.drawLine()
+      // self.drawLine()
       e.preventDefault()
       e.stopPropagation()
     }
