@@ -1037,7 +1037,7 @@ export default class operationImage {
       if (self.posList.length === 3) {
         self.posList.shift()
       }
-      // self.drawLine()
+      self.drawLine()
       e.preventDefault()
       e.stopPropagation()
     }
@@ -1046,7 +1046,7 @@ export default class operationImage {
   }
   drawLine() {
     let _imageInfo = this.imageList[this.currentIndex];
-    this.clearCanvas()
+    // this.clearCanvas()
     this.drawContext.beginPath()
     this.drawContext.moveTo(this.posList[0]['mouseX'], this.posList[0]['mouseY'])
     if (this.posList.length > 1) {
