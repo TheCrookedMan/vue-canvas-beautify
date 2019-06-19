@@ -996,39 +996,47 @@ export default class operationImage {
   beginDoodle() {
     this.initDoodleOptions()
     let self = this,
-      _imageInfo = this.imageList[this.currentIndex]
+      _imageInfo = this.imageList[this.currentIndex];
 
-    this.drawCanvas = document.createElement('Canvas')
-    this.drawCanvas.width = _imageInfo.image.width
-    this.drawCanvas.height = _imageInfo.image.height
+    this.drawCanvas = document.createElement('Canvas');
+    this.drawCanvas.style.position = 'absolute'
+    this.drawCanvas.width = self.canvas.getBoundingClientRect().width
+    this.drawCanvas.height = self.canvas.getBoundingClientRect().height
+    this.drawCanvas.style.left = self.canvas.getBoundingClientRect().left + 'px'
+    this.drawCanvas.style.top = self.canvas.getBoundingClientRect().top + 'px'
+    this.drawCanvas.style.zIndex = '1'
+
+
     this.drawContext = this.drawCanvas.getContext('2d')
+    let canvasContainerDiv = document.querySelector('#canvasContainerDiv')
+    canvasContainerDiv.appendChild(this.drawCanvas)
     this.posList = []
     this.doodleTouchStart = function (e) {
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
-      var mouseX = pageX - self.canvas.getBoundingClientRect().left;
-      var mouseY = pageY - self.canvas.getBoundingClientRect().top;
-      mouseX = mouseX / _imageInfo.proportion;
-      mouseY = mouseY / _imageInfo.proportion;
+      var mouseX = pageX - self.drawCanvas.getBoundingClientRect().left;
+      var mouseY = pageY - self.drawCanvas.getBoundingClientRect().top;
+      // mouseX = mouseX / _imageInfo.proportion;
+      // mouseY = mouseY / _imageInfo.proportion;
       self.posList = []
       self.posList.push({
         mouseX: mouseX,
         mouseY: mouseY
       })
-      self.drawLine()
+      self.drawLineStart()
       e.preventDefault()
       e.stopPropagation()
     }
     // this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
-    this.canvas.addEventListener('touchstart', this.doodleTouchStart, false)
+    this.drawCanvas.addEventListener('touchstart', this.doodleTouchStart, false)
 
     this.doodleTouchMove = function (e) {
       let pageX = e.touches[0].pageX,
         pageY = e.touches[0].pageY;
-      var mouseX = pageX - self.canvas.getBoundingClientRect().left;
-      var mouseY = pageY - self.canvas.getBoundingClientRect().top;
-      mouseX = mouseX / _imageInfo.proportion;
-      mouseY = mouseY / _imageInfo.proportion;
+      var mouseX = pageX - self.drawCanvas.getBoundingClientRect().left;
+      var mouseY = pageY - self.drawCanvas.getBoundingClientRect().top;
+      // mouseX = mouseX / _imageInfo.proportion;
+      // mouseY = mouseY / _imageInfo.proportion;
 
       self.posList.push({
         mouseX: mouseX,
@@ -1041,12 +1049,43 @@ export default class operationImage {
       e.preventDefault()
       e.stopPropagation()
     }
+
     // this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
-    this.canvas.addEventListener('touchmove', this.doodleTouchMove, false)
+    this.drawCanvas.addEventListener('touchmove', this.doodleTouchMove, false)
+  }
+
+  drawLineStart (){
+    let _imageInfo = this.imageList[this.currentIndex];
+    if (this.curTool === 'pencil') {
+      this.drawContext.globalCompositeOperation = "source-over";
+      this.drawContext.strokeStyle = this.curColor;
+      this.drawContext.lineJoin = "round";
+      if (this.curSize === 'S') {
+        this.drawContext.lineWidth = 10 * _imageInfo.proportion;
+      } else if (this.curSize === 'M') {
+        this.drawContext.lineWidth = 25 * _imageInfo.proportion;
+      } else if (this.curSize === 'L') {
+        this.drawContext.lineWidth = 40 * _imageInfo.proportion;
+      } else if (this.curSize === 'XL') {
+        this.drawContext.lineWidth = 55 * _imageInfo.proportion;
+      } else if (this.curSize === 'XXL') {
+        this.drawContext.lineWidth = 70 * _imageInfo.proportion;
+      }
+
+    } else {
+      this.drawContext.globalCompositeOperation = "destination-out";
+      this.drawContext.strokeStyle = '#fff';
+      this.drawContext.lineJoin = "round";
+      this.drawContext.lineWidth = 100 * _imageInfo.proportion;
+    }
+
+    // this.drawContext.beginPath()
+    
   }
   drawLine() {
     let _imageInfo = this.imageList[this.currentIndex];
     // this.clearCanvas()
+    
     this.drawContext.beginPath()
     this.drawContext.moveTo(this.posList[0]['mouseX'], this.posList[0]['mouseY'])
     if (this.posList.length > 1) {
@@ -1054,33 +1093,11 @@ export default class operationImage {
     }
 
     this.drawContext.closePath();
-    if (this.curTool === 'pencil') {
-      this.drawContext.globalCompositeOperation = "source-over";
-      this.drawContext.strokeStyle = this.curColor;
-      this.drawContext.lineJoin = "round";
-      if (this.curSize === 'S') {
-        this.drawContext.lineWidth = 10;
-      } else if (this.curSize === 'M') {
-        this.drawContext.lineWidth = 25;
-      } else if (this.curSize === 'L') {
-        this.drawContext.lineWidth = 40;
-      } else if (this.curSize === 'XL') {
-        this.drawContext.lineWidth = 55;
-      } else if (this.curSize === 'XXL') {
-        this.drawContext.lineWidth = 70;
-      }
-
-    } else {
-      this.drawContext.globalCompositeOperation = "destination-out";
-      this.drawContext.strokeStyle = '#fff';
-      this.drawContext.lineJoin = "round";
-      this.drawContext.lineWidth = 100;
-    }
     this.drawContext.stroke();
-
+    
     // Draw the outline image
-    this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
-    this.context.drawImage(this.drawCanvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    // this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
+    
   }
   clearCanvas() {
     let _imageInfo = this.imageList[this.currentIndex];
@@ -1104,7 +1121,10 @@ export default class operationImage {
   }
   sureDoodleImage() {
     let self = this
+    let _imageInfo = this.imageList[this.currentIndex];
+    this.context.drawImage(this.drawCanvas, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
     this.canvas.toBlob(function (result) {
+      self.drawCanvas.remove()
       let doodleImage = result
 
       self.clearCanvas()
