@@ -1049,7 +1049,6 @@ export default class operationImage {
       e.preventDefault()
       e.stopPropagation()
     }
-
     // this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
     this.drawCanvas.addEventListener('touchmove', this.doodleTouchMove, false)
   }
@@ -1061,22 +1060,24 @@ export default class operationImage {
       this.drawContext.strokeStyle = this.curColor;
       this.drawContext.lineJoin = "round";
       if (this.curSize === 'S') {
-        this.drawContext.lineWidth = 5;
+        this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.01);
       } else if (this.curSize === 'M') {
-        this.drawContext.lineWidth = 10;
+        this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.03);
       } else if (this.curSize === 'L') {
-        this.drawContext.lineWidth = 20;
+        this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.04);
       } else if (this.curSize === 'XL') {
-        this.drawContext.lineWidth = 30;
+        this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.05);
       } else if (this.curSize === 'XXL') {
-        this.drawContext.lineWidth = 40;
+        this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.06);
       }
     } else {
       this.drawContext.globalCompositeOperation = "destination-out";
       this.drawContext.strokeStyle = '#fff';
       this.drawContext.lineJoin = "round";
-      this.drawContext.lineWidth = 50;
+      this.drawContext.lineWidth = Math.ceil(document.body.clientWidth * 0.1);
     }
+
+    console.log("this.drawContext.lineWidth::::::", this.drawContext.lineWidth)
 
     // this.drawContext.beginPath()
     

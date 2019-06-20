@@ -27,8 +27,8 @@ export default {
     name: 'app',
     data(){
       return {
-        imageList: [__4,__3,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1]
-        // imageList: [__1,__test1,__test2,__test3,__test4,__test5,__test6]
+        // imageList: [__4,__3,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1]
+        imageList: [__1,__2,__3,__4,__test1,__test2,__test3,__test4,__test5,__test6]
       }
     },
     components: {
