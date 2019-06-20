@@ -1061,22 +1061,21 @@ export default class operationImage {
       this.drawContext.strokeStyle = this.curColor;
       this.drawContext.lineJoin = "round";
       if (this.curSize === 'S') {
-        this.drawContext.lineWidth = 10 * _imageInfo.proportion;
+        this.drawContext.lineWidth = 5;
       } else if (this.curSize === 'M') {
-        this.drawContext.lineWidth = 25 * _imageInfo.proportion;
+        this.drawContext.lineWidth = 10;
       } else if (this.curSize === 'L') {
-        this.drawContext.lineWidth = 40 * _imageInfo.proportion;
+        this.drawContext.lineWidth = 20;
       } else if (this.curSize === 'XL') {
-        this.drawContext.lineWidth = 55 * _imageInfo.proportion;
+        this.drawContext.lineWidth = 30;
       } else if (this.curSize === 'XXL') {
-        this.drawContext.lineWidth = 70 * _imageInfo.proportion;
+        this.drawContext.lineWidth = 40;
       }
-
     } else {
       this.drawContext.globalCompositeOperation = "destination-out";
       this.drawContext.strokeStyle = '#fff';
       this.drawContext.lineJoin = "round";
-      this.drawContext.lineWidth = 100 * _imageInfo.proportion;
+      this.drawContext.lineWidth = 50;
     }
 
     // this.drawContext.beginPath()
@@ -1115,6 +1114,7 @@ export default class operationImage {
   cancelDoodleImage() {
     this.clearCanvas()
     let _imageInfo = this.imageList[this.currentIndex];
+    this.drawCanvas.remove()
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
     this.canvas.removeEventListener('touchstart', this.doodleTouchStart)
     this.canvas.removeEventListener('touchmove', this.doodleTouchMove)
