@@ -1,7 +1,8 @@
 <template>
 <div id="app">
+  <input type="file" @change="fileChange">
     <div>
-      <operation-image :image-list="imageList"></operation-image>
+      <operation-image v-if="imageList.length > 0" :image-list="imageList"></operation-image>
       <!-- <img id="image" :src="imageList[1]"> -->
     </div>
 </div>
@@ -27,14 +28,16 @@ export default {
     name: 'app',
     data(){
       return {
-        // imageList: [__4,__3,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__1]
-        imageList: [__1,__2,__3,__4,__test1,__test2,__test3,__test4,__test5,__test6]
+        imageList: [__1,__2,__3,__4,'http://www.dev-oss.image.bestarschool.com/PROBLEM/20190307/onssD5tUvSFHz7ibgM1LIkckZ944/1551954504021.PNG',__test1,__test2,__test3,__test4,__test5,__test6]
+        // imageList: [__test1,__test2,__test3,__test4,__test5,__test6]
+        // imageList:[]
       }
     },
     components: {
       'operation-image': operationImage
     },
     mounted(){
+      
       // new Cropper(document.getElementById('image'),{
       //   aspectRatio: 16 / 9,
       //   crop(event) {
@@ -47,6 +50,11 @@ export default {
       //     console.log(event.detail.scaleY);
       //   },
       // })
+    },
+    methods:{
+      fileChange(e){
+        this.imageList.push(e.target.files[0])
+      }
     }
 }
 </script>

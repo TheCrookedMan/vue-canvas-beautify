@@ -1,5 +1,16 @@
 import './crop.less'
-import EXIF from 'exif-js'
+import {
+  MIME_TYPE_JPEG,
+  REGEXP_DATA_URL_JPEG
+} from './constants';
+import {
+  resetAndGetOrientation,
+  createObjectURL,
+  dataURLToArrayBuffer,
+  arrayBufferToDataURL,
+  parseOrientation,
+  ajax
+} from './utilities';
 
 export default class operationImage {
   constructor(imageList = [], container, cropModel = 'freedom', cropMinW = 50, cropMinH = 50) {
@@ -24,7 +35,7 @@ export default class operationImage {
     this.timeStamp = Date.now()
 
     this.timer;
-    this.imageType = 'image/png'
+    this.imageType = MIME_TYPE_JPEG
     this.imageDefinition = 1.0
 
     imageList.forEach((I, i) => {
@@ -57,120 +68,107 @@ export default class operationImage {
     this.canvasContainerDiv.id = 'canvasContainerDiv'
     this.canvasContainerDiv.appendChild(this.canvas)
   }
-  loadImage() {
+
+  read(arrayBuffer){
+    const Orientation = resetAndGetOrientation(arrayBuffer);
+    
+    let URL = arrayBufferToDataURL(arrayBuffer, MIME_TYPE_JPEG);
     let img = new Image(),
-      self = this,
-      __url;
-    img.crossOrigin = "anonymous";
-    return new Promise(function (resolve, reject) {
+      self = this;
+
+    console.log("Orientation:::", Orientation)
+    
+    return new Promise((resolve,reject)=>{
       img.onload = function () {
-        console.log(Object.prototype.toString.call(__url))
-        //手动释放内存
-        URL.revokeObjectURL(__url)
-        self.autoRotateImage(this).then((base64URL) => {
-          let blobImg = new Image()
-          blobImg.onload = function () {
-            self.imageList[self.currentIndex]['image'] = this
-            self.canvas.height = this.height
-            self.canvas.width = this.width
-            self.container.appendChild(self.canvasContainerDiv)
-            self.context = self.canvas.getContext("2d")
-            self.context.drawImage(this, 0, 0)
-            resolve()
-          }
-          blobImg.src = base64URL
-
-        }, (result) => {
-          self.imageList[self.currentIndex]['image'] = result
-          self.canvas.height = result.height
-          self.canvas.width = result.width
-          self.container.appendChild(self.canvasContainerDiv)
-          self.context = self.canvas.getContext("2d")
-          self.context.drawImage(result, 0, 0)
-          resolve()
-        })
-      }
-      img.onerror = function (error) {
-        console.log("img load error::::", error)
-        reject()
-      }
-      let imageInfo = self.imageList[self.currentIndex]
-      console.log("Object.prototype.toString.call(imageInfo.origin)::::", Object.prototype.toString.call(imageInfo.origin))
-      console.log("imageInfo.operateStackIndex::::", imageInfo.operateStackIndex)
-      if (imageInfo.operateStackIndex === -1) {
-        
-        if ("[object ArrayBuffer]" !== Object.prototype.toString.call(imageInfo.origin) && imageInfo.origin.indexOf('http') !== -1) {
-        
-          img.src = imageInfo.origin + '?t=' + self.timeStamp
-        } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
-          
-          __url = URL.createObjectURL(imageInfo.origin)
-          console.log("__url:::", __url)
-          console.log(Object.prototype.toString.call(__url))
-          img.src = __url
-          
+        self.context = self.canvas.getContext("2d")
+        if (3 === Orientation) {
+          self.canvas.width = this.width
+          self.canvas.height = this.height
+          self.context.translate(this.width / 2, this.height / 2)
+          self.context.rotate(180 * (Math.PI / 180));
+          self.context.translate(-this.width / 2, -this.height / 2)
+          self.context.drawImage(this, 0, 0, this.width, this.height)
+        } else if (6 === Orientation) {
+          self.canvas.width = this.height
+          self.canvas.height = this.width
+          self.context.translate(self.canvas.width, 0)
+          self.context.rotate(90 * (Math.PI / 180));
+          self.context.drawImage(this, 0, 0, self.canvas.height, self.canvas.width)
+        } else if (8 === Orientation) {
+          self.canvas.width = this.height
+          self.canvas.height = this.width
+          self.context.translate(0, self.canvas.height)
+          self.context.rotate(-90 * (Math.PI / 180));
+          self.context.drawImage(this, 0, 0, self.canvas.height, self.canvas.width)
         } else {
-          
-          img.src = imageInfo.origin
+          self.canvas.height = this.height
+          self.canvas.width = this.width
+          self.context.drawImage(this, 0, 0)
         }
-      } else {
-        __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
-
-        
-        img.src = __url
-        // let oReader = new FileReader()
-        // oReader.onload = function (e) {
-        //   img.src = e.target.result
-        // }
-        // oReader.readAsDataURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+        self.imageList[self.currentIndex]['image'] = {
+          width: self.canvas.width,
+          height: self.canvas.height,
+        }
+        self.container.appendChild(self.canvasContainerDiv)
+        resolve()
       }
+      img.src = URL
     })
   }
-  //根据图片拍摄角度自动纠正
-  autoRotateImage(imgFile) {
-    let self = this
-    return new Promise((resolve, reject) => {
-      let Orientation = null,
-        canvas = document.createElement('canvas'),
-        ctx = canvas.getContext("2d"),
-        deg = Math.PI / 180;
+  
+  loadImage() {
+    let self = this,
+    imageInfo = this.imageList[this.currentIndex];
 
-      EXIF.getData(imgFile, function () {
-        
-        Orientation = EXIF.getTag(this, "Orientation");
-        
-        switch (Orientation) {
-          case 3:
-            canvas.width = imgFile.width
-            canvas.height = imgFile.height
-            ctx.translate(canvas.width / 2, canvas.height / 2)
-            ctx.rotate(180 * (Math.PI / 180));
-            ctx.translate(-canvas.width / 2, -canvas.height / 2)
-            ctx.drawImage(imgFile, 0, 0, canvas.width, canvas.height)
-            resolve(canvas.toDataURL(self.imageType, self.imageDefinition))
-            break;
-          case 6:
-            canvas.width = imgFile.height
-            canvas.height = imgFile.width
-            ctx.translate(canvas.width, 0)
-            ctx.rotate(90 * (Math.PI / 180));
-            ctx.drawImage(this, 0, 0, canvas.height, canvas.width)
-            resolve(canvas.toDataURL(self.imageType, self.imageDefinition))
-            break;
-          case 8:
-            canvas.width = imgFile.height
-            canvas.height = imgFile.width
-            ctx.translate(0, canvas.height)
-            ctx.rotate(270 * (Math.PI / 180));
-            ctx.drawImage(this, 0, 0, canvas.height, canvas.width)
-            resolve(canvas.toDataURL(self.imageType, self.imageDefinition))
-            break;
-          default:
-            reject(imgFile)
-            break;
+    return new Promise(function (resolve, reject) {
+      if (imageInfo.operateStackIndex === -1) {
+        // Read ArrayBuffer from Data URL of JPEG images directly for better performance.  base64 URL
+        if (REGEXP_DATA_URL_JPEG.test(imageInfo.origin)) {
+          self.read(dataURLToArrayBuffer(imageInfo.origin)).then(() => {
+            resolve()
+          });
+          return;
+        } else if ("[object String]" === Object.prototype.toString.call(imageInfo.origin) && imageInfo.origin.indexOf('http') !== -1) {
+          ajax(imageInfo.origin).then((arrayBuffer) => {
+            self.read(arrayBuffer).then(() => {
+              resolve()
+            });
+          }, (err) => {
+            reject()
+            return new Error(err)
+          })
+        } else if ("[object File]" === Object.prototype.toString.call(imageInfo.origin)) {
+          let file = new FileReader()
+          file.onload = function() {
+            self.read(this.result).then(()=>{
+              resolve()
+            });
+          }
+          file.readAsArrayBuffer(imageInfo.origin)
+        } else if ("[object Blob]" === Object.prototype.toString.call(imageInfo.origin)) {
+          self.read(imageInfo.origin).then(() => {
+            resolve()
+          });
+        } else {
+          //本地图片URL
+          ajax(imageInfo.origin).then((arrayBuffer) => {
+            self.read(arrayBuffer).then(() => {
+              resolve()
+            });
+          }, (err) => {
+            reject()
+            return new Error(err)
+          })
+          // imageInfo.origin
         }
-      })
+      } else {
+        self.read(imageInfo.operateStack[imageInfo.operateStackIndex]).then(() => {
+          resolve()
+        });
+      }
+      
     })
+
   }
   calcProportion(width, height) {
     let heightProportion = 0,
@@ -185,6 +183,7 @@ export default class operationImage {
   }
   drawCanvasPanel() {
     let _currentImage = this.imageList[this.currentIndex]
+    
     _currentImage.proportion = this.calcProportion(_currentImage.image.width, _currentImage.image.height)
 
     let canvasObj = document.getElementById('drawCanvas')
@@ -240,7 +239,6 @@ export default class operationImage {
     let _bgImg = document.querySelector('.cropper-view-box>img')
     _bgImg.setAttribute('crossOrigin', 'anonymous')
     _bgImg.src = this.rotateCanvas()
-    // _bgImg.src = this.canvas.toDataURL("image/jpeg", 1.0)
 
     _bgImg.style.width = document.getElementById('canvasContainerDiv').getBoundingClientRect().width + 'px'
     _bgImg.style.height = document.getElementById('canvasContainerDiv').getBoundingClientRect().height + 'px'
@@ -1182,7 +1180,6 @@ export default class operationImage {
     this.context.drawImage(_imageInfo.image, 0, 0, _imageInfo.image.width, _imageInfo.image.height);
   }
   sureColorHandle() {
-    // let colorHandleImage = this.canvas.toDataURL("image/jpeg", 1.0)
     let self = this
     this.canvas.toBlob(function (result) {
       let colorHandleImage = result
@@ -1255,7 +1252,7 @@ export default class operationImage {
       }
     }
     this.context.putImageData(imgdata, 0, 0);
-    document.querySelector('.cropper-view-box>img').src = this.canvas.toDataURL("image/jpeg", this.imageDefinition)
+    document.querySelector('.cropper-view-box>img').src = this.canvas.toDataURL(this.imageType, this.imageDefinition)
   }
   pushOperateStack(base64Object) {
     let _imageInfo = this.imageList[this.currentIndex];
