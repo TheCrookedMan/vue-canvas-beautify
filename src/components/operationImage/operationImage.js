@@ -98,7 +98,9 @@ export default class operationImage {
       console.log("Object.prototype.toString.call(imageInfo.origin)::::", Object.prototype.toString.call(imageInfo.origin))
       console.log("imageInfo.operateStackIndex::::", imageInfo.operateStackIndex)
       if (imageInfo.operateStackIndex === -1) {
+        console.log(1)
         if (imageInfo.origin.indexOf('http') !== -1) {
+          console.log(2)
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
           console.log("123木头人")
@@ -106,6 +108,7 @@ export default class operationImage {
           img.src = __url
           console.log(Object.prototype.toString.call(__url))
         } else {
+          console.log(44)
           img.src = imageInfo.origin
         }
       } else {
