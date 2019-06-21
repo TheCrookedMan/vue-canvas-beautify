@@ -101,13 +101,15 @@ export default class operationImage {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
           __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+          img.src = __url
+          console.log(Object.prototype.toString.call(__url))
         } else {
           img.src = imageInfo.origin
         }
       } else {
         __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
 
-        console.log(Object.prototype.toString.call(__url))
+        
         img.src = __url
         // let oReader = new FileReader()
         // oReader.onload = function (e) {
