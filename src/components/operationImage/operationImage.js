@@ -92,6 +92,7 @@ export default class operationImage {
         reject()
       }
       let imageInfo = self.imageList[self.currentIndex]
+      console.log("hhhhhhhhhh:::::::::",Object.prototype.toString.call(imageInfo.origin))
       if (imageInfo.operateStackIndex === -1) {
         if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
