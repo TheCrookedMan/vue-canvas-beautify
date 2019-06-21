@@ -99,7 +99,7 @@ export default class operationImage {
       console.log("imageInfo.operateStackIndex::::", imageInfo.operateStackIndex)
       if (imageInfo.operateStackIndex === -1) {
         console.log(1)
-        if (imageInfo.origin.indexOf('http') !== -1) {
+        if ("[object ArrayBuffer]" !== Object.prototype.toString.call(imageInfo.origin) && imageInfo.origin.indexOf('http') !== -1) {
           console.log(2)
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
