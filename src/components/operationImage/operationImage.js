@@ -64,6 +64,9 @@ export default class operationImage {
     img.crossOrigin = "anonymous";
     return new Promise(function (resolve, reject) {
       img.onload = function () {
+        console.log(Object.prototype.toString.call(__url))
+        //手动释放内存
+        URL.revokeObjectURL(__url)
         self.autoRotateImage(this).then((base64URL) => {
           let blobImg = new Image()
           blobImg.onload = function () {
@@ -92,20 +95,23 @@ export default class operationImage {
         reject()
       }
       let imageInfo = self.imageList[self.currentIndex]
-      console.log("hhhhhhhhhh:::::::::",Object.prototype.toString.call(imageInfo.origin))
+      
       if (imageInfo.operateStackIndex === -1) {
         if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
+        } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
+          __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
         } else {
           img.src = imageInfo.origin
         }
       } else {
-        // __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
-        let oReader = new FileReader()
-        oReader.onload = function (e) {
-          img.src = e.target.result
-        }
-        oReader.readAsDataURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+        __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+        img.src = __url
+        // let oReader = new FileReader()
+        // oReader.onload = function (e) {
+        //   img.src = e.target.result
+        // }
+        // oReader.readAsDataURL(imageInfo.operateStack[imageInfo.operateStackIndex])
       }
     })
   }
