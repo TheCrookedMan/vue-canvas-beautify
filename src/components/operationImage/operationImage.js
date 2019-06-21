@@ -100,7 +100,7 @@ export default class operationImage {
         if (imageInfo.origin.indexOf('http') !== -1) {
           img.src = imageInfo.origin + '?t=' + self.timeStamp
         } else if ("[object ArrayBuffer]" === Object.prototype.toString.call(imageInfo.origin)) {
-          __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+          __url = URL.createObjectURL(imageInfo.origin)
           img.src = __url
           console.log(Object.prototype.toString.call(__url))
         } else {
