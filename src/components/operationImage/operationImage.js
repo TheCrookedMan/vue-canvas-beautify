@@ -106,6 +106,8 @@ export default class operationImage {
         }
       } else {
         __url = URL.createObjectURL(imageInfo.operateStack[imageInfo.operateStackIndex])
+
+        console.log(Object.prototype.toString.call(__url))
         img.src = __url
         // let oReader = new FileReader()
         // oReader.onload = function (e) {
